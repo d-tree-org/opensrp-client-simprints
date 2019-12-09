@@ -36,6 +36,12 @@ public class SimPrintsIdentifyActivity extends AppCompatActivity {
         context.startActivityForResult(intent, requestCode);
     }
 
+    public static void ConfirmIdentification(Activity context, String sessionid, String selectedGuid) {
+        SimPrintsHelper simPrintsHelper = new SimPrintsHelper(SimPrintsLibrary.getInstance().getProjectId(),
+                SimPrintsLibrary.getInstance().getUserId());
+        simPrintsHelper.confirmIdentity(context, sessionid, selectedGuid);
+    }
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,6 +95,7 @@ public class SimPrintsIdentifyActivity extends AppCompatActivity {
 
                 Intent returnIntent = new Intent();
                 returnIntent.putExtra(SimPrintsConstantHelper.INTENT_DATA, simPrintsIdentifications);
+                returnIntent.putExtra(Constants.SIMPRINTS_SESSION_ID, data.getStringExtra(Constants.SIMPRINTS_SESSION_ID));
                 setResult(RESULT_OK,returnIntent);
                 finish();
 
