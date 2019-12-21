@@ -94,8 +94,6 @@ public class SimPrintsRegisterActivity extends AppCompatActivity {
                 });
             }
 
-
-
         }
     }
     private void showFingerPrintFail(Context context, final OnDialogButtonClick onDialogButtonClick){
