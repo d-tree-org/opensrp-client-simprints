@@ -8,6 +8,9 @@ import android.view.View;
 import android.widget.TextView;
 
 
+import org.smartregister.Context;
+import org.smartregister.CoreLibrary;
+import org.smartregister.P2POptions;
 import org.smartregister.simprint.SimPrintsConstantHelper;
 import org.smartregister.simprint.SimPrintsIdentification;
 import org.smartregister.simprint.SimPrintsIdentifyActivity;
@@ -28,8 +31,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        SimPrintsLibrary.init(MainActivity.this, BuildConfig.SIMPRINTS_PROJECT_ID,"global_module");
 
         findViewById(R.id.capture_finger_print_btn).setOnClickListener(new View.OnClickListener() {
             @Override
