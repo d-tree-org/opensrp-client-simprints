@@ -4,4 +4,7 @@
     <string name="fail_result">Fail to get result</string>
     <string name="scan_again">Scan again</string>
     <string name="cancel">Cancel</string>
+
+    <string name="fingerprint_identification_title">Fingerprint Identification</string>
+
 </resources>

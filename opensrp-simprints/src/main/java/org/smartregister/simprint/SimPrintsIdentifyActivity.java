@@ -13,6 +13,9 @@ import android.widget.Toast;
 import com.simprints.libsimprints.Constants;
 import com.simprints.libsimprints.Identification;
 
+import org.smartregister.simprint.activity.SimprintsIdentificationRegisterActivity;
+import org.smartregister.simprint.fragment.SimprintsIdentificationRegisterFragment;
+
 import java.util.ArrayList;
 
 import static com.simprints.libsimprints.Constants.SIMPRINTS_PACKAGE_NAME;
@@ -27,7 +30,7 @@ public class SimPrintsIdentifyActivity extends AppCompatActivity {
     private int REQUEST_CODE;
     private String moduleId;
 
-    public static void StartSimprintsIdentifyActivity(Activity context, String moduleId, int requestCode){
+    public static void startSimprintsIdentifyActivity(Activity context, String moduleId, int requestCode){
         Intent intent = new Intent(context, SimPrintsIdentifyActivity.class);
         intent.putExtra(Constants.SIMPRINTS_MODULE_ID, moduleId);
         intent.putExtra(PUT_EXTRA_REQUEST_CODE, requestCode);
@@ -70,20 +73,33 @@ public class SimPrintsIdentifyActivity extends AppCompatActivity {
             ArrayList<Identification> identifications = data
                 .getParcelableArrayListExtra(Constants.SIMPRINTS_IDENTIFICATIONS);
 
+            //Use this later to filter confidence level of the results
             ArrayList<SimPrintsIdentification> simPrintsIdentifications = new ArrayList<>();
+
+            ArrayList<String> resultsGuids = new ArrayList<>();
+            String sessionId = "";
+            sessionId = data.getStringExtra("sessionId");
 
             if (check && identifications != null && identifications.size() > 0){
 
                 for (Identification identification : identifications){
                     SimPrintsIdentification simPrintsIdentification = new SimPrintsIdentification(identification.getGuid());
                     simPrintsIdentifications.add(simPrintsIdentification);
+                    resultsGuids.add(identification.getGuid());
                 }
             }
 
+            /*
             Intent returnIntent = new Intent();
             returnIntent.putExtra(SimPrintsConstantHelper.INTENT_DATA, simPrintsIdentifications);
             setResult(RESULT_OK,returnIntent);
             finish();
+             */
+
+            Intent intent = new Intent(this, SimprintsIdentificationRegisterActivity.class);
+            intent.putExtra(SimprintsIdentificationRegisterFragment.SESSION_ID_EXTRA, sessionId);
+            intent.putExtra(SimprintsIdentificationRegisterFragment.RESULTS_GUID_EXTRA, resultsGuids);
+            startActivity(intent);
 
         }else {
             showFingerPrintFail(this, new OnDialogButtonClick() {

@@ -156,6 +156,18 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+
+    implementation('org.smartregister:opensrp-client-core:1.8.10-SNAPSHOT@aar') {
+        transitive = true
+    }
+
+    implementation('org.smartregister:opensrp-client-family:1.2.20-DEMO-2-SNAPSHOT@aar') {
+        transitive = true
+        exclude group: 'org.smartregister', module: 'opensrp-client-core'
+        exclude group: 'com.android.support', module: 'appcompat-v7'
+        exclude group: 'org.smartregister', module: 'opensrp-client-materialedittext'
+    }
+
 }
 
 task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest']) {
