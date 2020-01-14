@@ -76,7 +76,7 @@ def githubProperties = new Properties()
 githubProperties.load(new FileInputStream(rootProject.file("github.properties")))
 
 def getVersionName = { ->
-    return "1.1.0-SNAPSHOT" // Replace with version Name
+    return "1.1.1-SNAPSHOT" // Replace with version Name
 }
 
 def getArtificatId = { ->
@@ -91,33 +91,33 @@ publishing {
             version getVersionName()
             artifact("$buildDir/outputs/aar/${getArtificatId()}-debug.aar")
 
-            //This is to carter for transitive dependencies within this library
-            pom.withXml {
-                final dependenciesNode = asNode().appendNode('dependencies')
-                ext.addDependency = { Dependency dep, String scope ->
-                    if (dep.group == null || dep.version == null || dep.name == null || dep.name == "unspecified")
-                        return
-                    final dependencyNode = dependenciesNode.appendNode('dependency')
-                    dependencyNode.appendNode('groupId', dep.group)
-                    dependencyNode.appendNode('artifactId', dep.name)
-                    dependencyNode.appendNode('version', dep.version)
-                    dependencyNode.appendNode('scope', scope)
-                    if (!dep.transitive) {
-                        final exclusionNode = dependencyNode.appendNode('exclusions').appendNode('exclusion')
-                        exclusionNode.appendNode('groupId', '*')
-                        exclusionNode.appendNode('artifactId', '*')
-                    } else if (!dep.properties.excludeRules.empty) {
-                        final exclusionNode = dependencyNode.appendNode('exclusions').appendNode('exclusion')
-                        dep.properties.excludeRules.each { ExcludeRule rule ->
-                            exclusionNode.appendNode('groupId', rule.group ?: '*')
-                            exclusionNode.appendNode('artifactId', rule.module ?: '*')
-                        }
-                    }
-                }
-                configurations.compile.getDependencies().each { dep -> addDependency(dep, "compile") }
-                configurations.api.getDependencies().each { dep -> addDependency(dep, "compile") }
-                configurations.implementation.getDependencies().each { dep -> addDependency(dep, "runtime") }
-            }
+//            //This is to carter for transitive dependencies within this library
+//            pom.withXml {
+//                final dependenciesNode = asNode().appendNode('dependencies')
+//                ext.addDependency = { Dependency dep, String scope ->
+//                    if (dep.group == null || dep.version == null || dep.name == null || dep.name == "unspecified")
+//                        return
+//                    final dependencyNode = dependenciesNode.appendNode('dependency')
+//                    dependencyNode.appendNode('groupId', dep.group)
+//                    dependencyNode.appendNode('artifactId', dep.name)
+//                    dependencyNode.appendNode('version', dep.version)
+//                    dependencyNode.appendNode('scope', scope)
+//                    if (!dep.transitive) {
+//                        final exclusionNode = dependencyNode.appendNode('exclusions').appendNode('exclusion')
+//                        exclusionNode.appendNode('groupId', '*')
+//                        exclusionNode.appendNode('artifactId', '*')
+//                    } else if (!dep.properties.excludeRules.empty) {
+//                        final exclusionNode = dependencyNode.appendNode('exclusions').appendNode('exclusion')
+//                        dep.properties.excludeRules.each { ExcludeRule rule ->
+//                            exclusionNode.appendNode('groupId', rule.group ?: '*')
+//                            exclusionNode.appendNode('artifactId', rule.module ?: '*')
+//                        }
+//                    }
+//                }
+//                configurations.compile.getDependencies().each { dep -> addDependency(dep, "compile") }
+//                configurations.api.getDependencies().each { dep -> addDependency(dep, "compile") }
+//                configurations.implementation.getDependencies().each { dep -> addDependency(dep, "runtime") }
+//            }
 
         }
     }
@@ -161,7 +161,7 @@ dependencies {
         transitive = true
     }
 
-    implementation('org.smartregister:opensrp-client-family:1.2.20-DEMO-2-SNAPSHOT@aar') {
+    implementation('org.smartregister:opensrp-client-family:1.2.26-DEMO-2-SNAPSHOT@aar') {
         transitive = true
         exclude group: 'org.smartregister', module: 'opensrp-client-core'
         exclude group: 'com.android.support', module: 'appcompat-v7'
