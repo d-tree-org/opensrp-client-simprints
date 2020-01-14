@@ -76,17 +76,17 @@ def githubProperties = new Properties()
 githubProperties.load(new FileInputStream(rootProject.file("github.properties")))
 
 def getVersionName = { ->
-    return "1.1.2-SNAPSHOT" // Replace with version Name
+    return "1.1.2-SNAPSHOT" // Library version
 }
 
 def getArtificatId = { ->
-    return "opensrp-simprints" // Replace with library name ID
+    return "opensrp-simprints" // Library name
 }
 
 publishing {
     publications {
         bar(MavenPublication) {
-            groupId 'org.smartregister' // Replace with group ID
+            groupId 'org.smartregister' // Library groupID
             artifactId getArtificatId()
             version getVersionName()
             artifact("$buildDir/outputs/aar/${getArtificatId()}-debug.aar")
@@ -133,7 +133,7 @@ publishing {
             credentials {
                 /** Create github.properties in root project folder file with
                  ** gpr.usr=GITHUB_USER_ID & gpr.key=PERSONAL_ACCESS_TOKEN
-                 ** Set env variable GPR_USER & GPR_API_KEY if not adding a properties file**/
+                 ** Set env variable GPR_debugdebugUSER & GPR_API_KEY if not adding a properties file**/
 
                 username = githubProperties['gpr.usr'] ?: System.getenv("GPR_USER")
                 password = githubProperties['gpr.key'] ?: System.getenv("GPR_API_KEY")
