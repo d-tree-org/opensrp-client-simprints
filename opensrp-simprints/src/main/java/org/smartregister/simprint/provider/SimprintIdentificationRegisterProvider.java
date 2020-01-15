@@ -289,9 +289,9 @@ public class SimprintIdentificationRegisterProvider implements RecyclerViewProvi
 
     public class FooterViewHolder extends RecyclerView.ViewHolder {
         public TextView pageInfoView;
-        public Button nextPageView;
-        public Button previousPageView;
-        public TextView textViewNoneOfAbove;
+        public ImageView nextPageView;
+        public ImageView previousPageView;
+        public CustomFontTextView textViewNoneOfAbove;
 
         public FooterViewHolder(View view) {
             super(view);
