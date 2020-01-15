@@ -1,6 +1,8 @@
 package org.smartregister.simprint.fragment;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
@@ -9,8 +11,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import org.smartregister.commonregistry.CommonPersonObject;
+import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.cursoradapter.RecyclerViewPaginatedAdapter;
 import org.smartregister.simprint.R;
+import org.smartregister.simprint.SimPrintsHelper;
+import org.smartregister.simprint.SimPrintsLibrary;
 import org.smartregister.simprint.contract.SimprintsIdentificationRegisterFragmentContract;
 import org.smartregister.simprint.model.SimprintsIdentificationRegisterFragmentModel;
 import org.smartregister.simprint.presenter.SimprintIdentificationRegisterFragmentPresenter;
@@ -158,10 +164,97 @@ public class SimprintsIdentificationRegisterFragment extends
     @Override
     protected void onViewClicked(View view) {
 
+        if (view.getId() == R.id.patient_column){
+            if (view.getTag() != null && view.getTag(R.id.VIEW_ID) == "click_view_normal") {
+                goToFamilyProfileActivity(view);
+            }
+        }
+
+        if (view.getId() == R.id.next_arrow){
+            if (view.getTag() != null && view.getTag(R.id.VIEW_ID) == "click_next_arrow") {
+                goToFamilyProfileActivity(view);
+            }
+        }
+
+        if (view.getId() == R.id.textview_none_of_above){
+            if (view.getTag() != null && view.getTag(R.id.VIEW_ID) == "click_none_of_above") {
+                handleNoneSelected(view);
+            }
+        }
+    }
+    public void handleNoneSelected(android.view.View view) {
+        String sessionid = this.getActivity().getIntent().getStringExtra("session_id");
+        // A call back to SimPrint to notify that none of the item on the list was selected
+        org.smartregister.family.util.Utils.startAsyncTask(new ConfirmIdentificationTask(sessionid, "none_selected"), null);
+
+        this.getActivity().finish();
+    }
+
+
+    public void goToFamilyProfileActivity(android.view.View view) {
+        if (view.getTag() instanceof CommonPersonObjectClient) {
+            CommonPersonObjectClient pc = (CommonPersonObjectClient) view.getTag();
+
+            //SimPrint Confirmation of the selected client
+            String baseEntityId = pc.entityId();
+            String simPrintsGuid = getSimPrintGuid(baseEntityId);
+            String sessionid = this.getActivity().getIntent().getStringExtra("session_id");
+            org.smartregister.family.util.Utils.startAsyncTask(new ConfirmIdentificationTask(sessionid, simPrintsGuid), null);
+
+            // Get values to start the family profile
+            String relational_id = org.smartregister.family.util.Utils.getValue(pc.getColumnmaps(), "relationalid", false);
+            CommonPersonObject patient = org.smartregister.family.util.Utils.context().commonrepository(org.smartregister.family.util.Utils.metadata().familyRegister.tableName)
+                    .findByCaseID(relational_id);
+            Intent intent = new Intent(this.getActivity(), org.smartregister.family.util.Utils.metadata().profileActivity);
+            intent.putExtra("family_base_entity_id", patient.getCaseId());
+            intent.putExtra("family_head",
+                    org.smartregister.family.util.Utils.getValue(patient.getColumnmaps(), "family_head", false));
+            intent.putExtra("primary_caregiver",
+                    org.smartregister.family.util.Utils.getValue(patient.getColumnmaps(), "primary_caregiver", false));
+            intent.putExtra("village_town",
+                    org.smartregister.family.util.Utils.getValue(patient.getColumnmaps(), "village_town", false));
+            intent.putExtra("family_name",
+                    org.smartregister.family.util.Utils.getValue(patient.getColumnmaps(), "first_name", false));
+            intent.putExtra("go_to_due_page", false);
+            this.startActivity(intent);
+            this.getActivity().finish();
+        }
     }
 
     @Override
     public void showNotFoundPopup(String s) {
 
     }
+
+    private String getSimPrintGuid(String baseEntityId) {
+        HashMap<String, String> baseidsGuids = (HashMap<String, String>) this.getActivity().getIntent().getSerializableExtra("baseids_guids");
+        return baseidsGuids.get(baseEntityId);
+    }
+
+    ////////////////////////////////////////////////////////////////////
+    //      Inner Class | SimPrints Identification Confirmation
+    ///////////////////////////////////////////////////////////////////
+
+    private class ConfirmIdentificationTask extends AsyncTask<Void, Void, Void> {
+
+        private String sessiodId;
+        private String selectedGuid;
+
+        public ConfirmIdentificationTask(String sessiodId, String selectedGuid) {
+            this.sessiodId = sessiodId;
+            this.selectedGuid = selectedGuid;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            confirmSelectedGuid(sessiodId, selectedGuid);
+            return null;
+        }
+    }
+
+    private void confirmSelectedGuid(String sessionid, String simPrintsGuid) {
+        SimPrintsHelper simPrintsHelper = new SimPrintsHelper(SimPrintsLibrary.getInstance().getProjectId(), SimPrintsLibrary.getInstance().getUserId());
+        simPrintsHelper.confirmIdentity(this.getActivity(), sessionid, simPrintsGuid);
+    }
+
 }
