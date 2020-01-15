@@ -20,6 +20,7 @@ import org.smartregister.family.fragment.BaseFamilyProfileMemberFragment;
 import org.smartregister.family.util.DBConstants;
 import org.smartregister.family.util.Utils;
 import org.smartregister.helper.ImageRenderHelper;
+import org.smartregister.simprint.R;
 import org.smartregister.view.contract.SmartRegisterClient;
 import org.smartregister.view.contract.SmartRegisterClients;
 import org.smartregister.view.customcontrols.CustomFontTextView;
@@ -29,6 +30,7 @@ import org.smartregister.view.dialog.ServiceModeOption;
 import org.smartregister.view.dialog.SortOption;
 import org.smartregister.view.viewholder.OnClickFormLauncher;
 
+import java.text.MessageFormat;
 import java.util.Set;
 
 import static org.smartregister.family.util.Utils.getName;
@@ -44,6 +46,7 @@ public class SimprintIdentificationRegisterProvider implements RecyclerViewProvi
     private Context context;
     private CommonRepository commonRepository;
     private ImageRenderHelper imageRenderHelper;
+    private static final String CLICK_NONE_OF_ABOVE = "click_none_of_above";
 
 
     public SimprintIdentificationRegisterProvider(Context context, CommonRepository commonRepository, Set visibleColumns, View.OnClickListener onClickListener, View.OnClickListener paginationClickListener) {
@@ -168,6 +171,12 @@ public class SimprintIdentificationRegisterProvider implements RecyclerViewProvi
         view.setTag(org.smartregister.family.R.id.VIEW_ID, BaseFamilyProfileMemberFragment.CLICK_VIEW_NORMAL);
     }
 
+    private void setNoneOfAboveOnclickListener(View view) {
+        view.setOnClickListener(onClickListener);
+        view.setTag("none_selected");
+        view.setTag(org.smartregister.family.R.id.VIEW_ID, CLICK_NONE_OF_ABOVE);
+    }
+
     private void attachNextArrowOnclickListener(View view, SmartRegisterClient client) {
         view.setOnClickListener(onClickListener);
         view.setTag(client);
@@ -176,8 +185,29 @@ public class SimprintIdentificationRegisterProvider implements RecyclerViewProvi
 
 
     @Override
-    public void getFooterView(RecyclerView.ViewHolder viewHolder, int i, int i1, boolean b, boolean b1) {
+    public void getFooterView(RecyclerView.ViewHolder viewHolder, int currentPageCount, int totalPageCount, boolean hasNext, boolean hasPrevious) {
+        final FooterViewHolder footerViewHolder = (FooterViewHolder) viewHolder;
+        footerViewHolder.pageInfoView.setText(
+                MessageFormat.format(context.getString(org.smartregister.R.string.str_page_info), currentPageCount, totalPageCount)
+        );
 
+        footerViewHolder.nextPageView.setVisibility(hasNext ? View.VISIBLE : View.INVISIBLE);
+        footerViewHolder.previousPageView.setVisibility(hasPrevious ? View.VISIBLE : View.INVISIBLE);
+
+        // Check if it is the last page and include the option for none of the items above or in the previous page meaning that the patient was not found using fingerprint scan
+        footerViewHolder.textViewNoneOfAbove.setVisibility(!hasNext ? View.VISIBLE : View.GONE);
+        footerViewHolder.textViewNoneOfAbove.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                footerViewHolder.textViewNoneOfAbove.performLongClick();
+            }
+        });
+
+        View noneOfAboveView = footerViewHolder.textViewNoneOfAbove;
+        setNoneOfAboveOnclickListener(noneOfAboveView);
+
+        footerViewHolder.nextPageView.setOnClickListener(paginationClickListener);
+        footerViewHolder.previousPageView.setOnClickListener(paginationClickListener);
     }
 
     @Override
@@ -208,7 +238,7 @@ public class SimprintIdentificationRegisterProvider implements RecyclerViewProvi
 
     @Override
     public RecyclerView.ViewHolder createFooterHolder(ViewGroup parent) {
-        View view = inflater.inflate(org.smartregister.family.R.layout.smart_register_pagination, parent, false);
+        View view = inflater.inflate(R.layout.simprint_result_pagination, parent, false);
         return new FooterViewHolder(view);
     }
 
@@ -261,6 +291,7 @@ public class SimprintIdentificationRegisterProvider implements RecyclerViewProvi
         public TextView pageInfoView;
         public Button nextPageView;
         public Button previousPageView;
+        public TextView textViewNoneOfAbove;
 
         public FooterViewHolder(View view) {
             super(view);
@@ -268,6 +299,7 @@ public class SimprintIdentificationRegisterProvider implements RecyclerViewProvi
             nextPageView = view.findViewById(org.smartregister.R.id.btn_next_page);
             previousPageView = view.findViewById(org.smartregister.R.id.btn_previous_page);
             pageInfoView = view.findViewById(org.smartregister.R.id.txt_page_info);
+            textViewNoneOfAbove = view.findViewById(R.id.textview_none_of_above);
         }
     }
 
