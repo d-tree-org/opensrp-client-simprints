@@ -76,7 +76,7 @@ def githubProperties = new Properties()
 githubProperties.load(new FileInputStream(rootProject.file("github.properties")))
 
 def getVersionName = { ->
-    return "1.1.5-SNAPSHOT" // Library version
+    return "1.1.6-SNAPSHOT" // Library version
 }
 
 def getArtificatId = { ->
@@ -115,7 +115,7 @@ publishing {
             pom.withXml {
                 final dependenciesNode = asNode().appendNode('dependencies')
                 ext.addDependency = { Dependency dep, String scope ->
-                    if (dep.group == null || dep.version == null || dep.name == null || dep.name == "unspecified")
+                    if (dep.group == null || dep.version == null || dep.name == null || dep.name == 'unspecified')
                         return
                     final dependencyNode = dependenciesNode.appendNode('dependency')
                     dependencyNode.appendNode('groupId', dep.group)
@@ -127,16 +127,17 @@ publishing {
                         exclusionNode.appendNode('groupId', '*')
                         exclusionNode.appendNode('artifactId', '*')
                     } else if (!dep.properties.excludeRules.empty) {
-                        final exclusionNode = dependencyNode.appendNode('exclusions').appendNode('exclusion')
+                        final exclusionsNode = dependencyNode.appendNode('exclusions')
                         dep.properties.excludeRules.each { ExcludeRule rule ->
-                            exclusionNode.appendNode('groupId', rule.group ?: '*')
-                            exclusionNode.appendNode('artifactId', rule.module ?: '*')
+                            def exclusion = exclusionsNode.appendNode('exclusion')
+                            exclusion.appendNode('groupId', rule.group ?: '*')
+                            exclusion.appendNode('artifactId', rule.module ?: '*')
                         }
                     }
                 }
-                configurations.compile.getDependencies().each { dep -> addDependency(dep, "compile") }
-                configurations.api.getDependencies().each { dep -> addDependency(dep, "compile") }
-                configurations.implementation.getDependencies().each { dep -> addDependency(dep, "runtime") }
+                configurations.compile.getDependencies().each { dep -> addDependency(dep, 'compile') }
+                configurations.api.getDependencies().each { dep -> addDependency(dep, 'compile') }
+                configurations.implementation.getDependencies().each { dep -> addDependency(dep, 'runtime') }
             }
 
         }
