@@ -7,4 +7,6 @@
 
     <string name="fingerprint_identification_title">Fingerprint Identification</string>
 
+    <string name="none_of_above">None of above</string>
+
 </resources>
