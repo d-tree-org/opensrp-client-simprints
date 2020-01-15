@@ -296,9 +296,9 @@ public class SimprintIdentificationRegisterProvider implements RecyclerViewProvi
         public FooterViewHolder(View view) {
             super(view);
 
-            nextPageView = view.findViewById(org.smartregister.R.id.btn_next_page);
-            previousPageView = view.findViewById(org.smartregister.R.id.btn_previous_page);
-            pageInfoView = view.findViewById(org.smartregister.R.id.txt_page_info);
+            nextPageView = view.findViewById(R.id.btn_next_page);
+            previousPageView = view.findViewById(R.id.btn_previous_page);
+            pageInfoView = view.findViewById(R.id.txt_page_info);
             textViewNoneOfAbove = view.findViewById(R.id.textview_none_of_above);
         }
     }
