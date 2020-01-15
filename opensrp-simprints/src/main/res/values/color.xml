@@ -8,4 +8,6 @@
 
     <color name="colorWhite">#FFFFFF</color>
 
+    <color name="visit_status_not_yet">@android:color/darker_gray</color>
+
 </resources>
