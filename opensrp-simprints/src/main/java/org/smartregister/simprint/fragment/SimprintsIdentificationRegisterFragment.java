@@ -29,6 +29,7 @@ import org.smartregister.view.fragment.BaseRegisterFragment;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import static org.smartregister.simprint.util.Utils.convertDpToPixel;
@@ -41,6 +42,7 @@ public class SimprintsIdentificationRegisterFragment extends
 
     private static String sessionID = "";
     private static ArrayList<String> resultsGuid = new ArrayList<>();
+    private static ArrayList<HashMap<String, String>> guidSimprintsIdMap = new ArrayList<>();
 
     android.content.Context activity;
 
@@ -130,9 +132,16 @@ public class SimprintsIdentificationRegisterFragment extends
 
         ArrayList<String> baseEntityIds = new ArrayList<>();
         for(String id : resultsGuid){
-            baseEntityIds.add(JsonFormUtil.lookForClientBaseEntityIds(id));
-        }
 
+            String baseEntityId = JsonFormUtil.lookForClientBaseEntityIds(id);
+            baseEntityIds.add(baseEntityId);
+
+            if (baseEntityId != null && !baseEntityId.isEmpty()){
+                HashMap<String, String> baseEntitySimprintsId = null;
+                baseEntitySimprintsId.put(baseEntityId, id);
+                guidSimprintsIdMap.add(baseEntitySimprintsId);
+            }
+        }
         presenter = new SimprintIdentificationRegisterFragmentPresenter(this, new SimprintsIdentificationRegisterFragmentModel(), null, baseEntityIds);
     }
 
@@ -227,8 +236,16 @@ public class SimprintsIdentificationRegisterFragment extends
     }
 
     private String getSimPrintGuid(String baseEntityId) {
-        HashMap<String, String> baseidsGuids = (HashMap<String, String>) this.getActivity().getIntent().getSerializableExtra("baseids_guids");
-        return baseidsGuids.get(baseEntityId);
+
+        String simprintsGuid = "";
+
+        for (HashMap hashMap : guidSimprintsIdMap){
+            if (hashMap.containsKey(baseEntityId)){
+                simprintsGuid = (String)hashMap.get(baseEntityId);
+            }
+        }
+        return simprintsGuid;
+
     }
 
     ////////////////////////////////////////////////////////////////////
