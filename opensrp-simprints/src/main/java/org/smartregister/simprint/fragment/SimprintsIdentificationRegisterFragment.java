@@ -137,7 +137,7 @@ public class SimprintsIdentificationRegisterFragment extends
             baseEntityIds.add(baseEntityId);
 
             if (baseEntityId != null && !baseEntityId.isEmpty()){
-                HashMap<String, String> baseEntitySimprintsId = null;
+                HashMap<String, String> baseEntitySimprintsId = new HashMap<>();
                 baseEntitySimprintsId.put(baseEntityId, id);
                 guidSimprintsIdMap.add(baseEntitySimprintsId);
             }
