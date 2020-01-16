@@ -76,7 +76,7 @@ def githubProperties = new Properties()
 githubProperties.load(new FileInputStream(rootProject.file("github.properties")))
 
 def getVersionName = { ->
-    return "1.1.10-SNAPSHOT" // Library version
+    return "1.1.13-SNAPSHOT" // Library version
 }
 
 def getArtificatId = { ->
