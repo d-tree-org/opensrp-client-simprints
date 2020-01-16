@@ -100,6 +100,7 @@ public class SimPrintsIdentifyActivity extends AppCompatActivity {
             intent.putExtra(SimprintsIdentificationRegisterFragment.SESSION_ID_EXTRA, sessionId);
             intent.putExtra(SimprintsIdentificationRegisterFragment.RESULTS_GUID_EXTRA, resultsGuids);
             startActivity(intent);
+            finish();
 
         }else {
             showFingerPrintFail(this, new OnDialogButtonClick() {
