@@ -48,8 +48,9 @@ public class SimprintIdentificationRegisterProvider implements RecyclerViewProvi
     private ImageRenderHelper imageRenderHelper;
     private static final String CLICK_NONE_OF_ABOVE = "click_none_of_above";
 
+    private boolean hasResults = false;
 
-    public SimprintIdentificationRegisterProvider(Context context, CommonRepository commonRepository, Set visibleColumns, View.OnClickListener onClickListener, View.OnClickListener paginationClickListener) {
+    public SimprintIdentificationRegisterProvider(Context context, CommonRepository commonRepository, Set visibleColumns, View.OnClickListener onClickListener, View.OnClickListener paginationClickListener, boolean hasResults) {
 
         this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.visibleColumns = visibleColumns;
@@ -61,6 +62,7 @@ public class SimprintIdentificationRegisterProvider implements RecyclerViewProvi
         this.commonRepository = commonRepository;
         this.imageRenderHelper = new ImageRenderHelper(context);
 
+        this.hasResults = hasResults;
 
     }
 

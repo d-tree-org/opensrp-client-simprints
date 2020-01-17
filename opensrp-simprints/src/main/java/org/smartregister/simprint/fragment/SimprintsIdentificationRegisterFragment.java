@@ -111,8 +111,16 @@ public class SimprintsIdentificationRegisterFragment extends
 
     @Override
     public void initializeAdapter(Set<org.smartregister.configurableviews.model.View> visibleColumns) {
+
+        boolean resultsAvailable = false;
+        if (!resultsGuid.isEmpty()){
+            if (resultsGuid.size() > 0){
+                resultsAvailable = true;
+            }
+        }
+
         SimprintIdentificationRegisterProvider provider = new SimprintIdentificationRegisterProvider(
-                getActivity(),commonRepository(), visibleColumns, registerActionHandler, paginationViewHandler);
+                getActivity(),commonRepository(), visibleColumns, registerActionHandler, paginationViewHandler, resultsAvailable);
         this.clientAdapter = new RecyclerViewPaginatedAdapter(null, provider, context().commonrepository(this.tablename));
         this.clientAdapter.setCurrentlimit(20);
         clientsView.setAdapter(clientAdapter);
