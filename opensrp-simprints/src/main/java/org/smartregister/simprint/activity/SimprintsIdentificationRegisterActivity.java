@@ -8,12 +8,14 @@ import android.view.View;
 import org.json.JSONObject;
 import org.smartregister.simprint.R;
 import org.smartregister.simprint.contract.SimprintsIdentificationRegisterContract;
+import org.smartregister.simprint.fragment.EmptyResultFragment;
 import org.smartregister.simprint.fragment.SimprintsIdentificationRegisterFragment;
 import org.smartregister.simprint.model.SimprintsIdentificationRegisterModel;
 import org.smartregister.simprint.presenter.SimprintsIdentificationRegisterPresenter;
 import org.smartregister.view.activity.BaseRegisterActivity;
 import org.smartregister.view.fragment.BaseRegisterFragment;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -43,7 +45,12 @@ public class SimprintsIdentificationRegisterActivity extends BaseRegisterActivit
 
     @Override
     protected BaseRegisterFragment getRegisterFragment() {
-        return new SimprintsIdentificationRegisterFragment().newInstance(this);
+        ArrayList<String> results = (ArrayList<String>)this.getIntent().getSerializableExtra("result_guids");
+        if (results.size() > 0){
+            return new EmptyResultFragment();
+        }else {
+            return new SimprintsIdentificationRegisterFragment().newInstance(this);
+        }
     }
 
     @Override
