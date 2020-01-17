@@ -32,6 +32,9 @@ android {
         versionName project.VERSION_NAME
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        project.archivesBaseName = "opensrp-client-simprints"
+
     }
     buildTypes {
         release {
@@ -80,7 +83,7 @@ def getVersionName = { ->
 }
 
 def getArtificatId = { ->
-    return "opensrp-simprints" // Library name
+    return "opensrp-client-simprints" // Library name
 }
 
 publishing {
