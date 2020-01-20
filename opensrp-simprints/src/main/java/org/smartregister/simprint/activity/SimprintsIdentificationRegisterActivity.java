@@ -47,9 +47,9 @@ public class SimprintsIdentificationRegisterActivity extends BaseRegisterActivit
     protected BaseRegisterFragment getRegisterFragment() {
         ArrayList<String> results = (ArrayList<String>)this.getIntent().getSerializableExtra("result_guids");
         if (results.size() > 0){
-            return new EmptyResultFragment();
-        }else {
             return new SimprintsIdentificationRegisterFragment().newInstance(this);
+        }else {
+            return new EmptyResultFragment();
         }
     }
 
