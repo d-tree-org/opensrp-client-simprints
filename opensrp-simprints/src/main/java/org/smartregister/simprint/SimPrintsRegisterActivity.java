@@ -94,11 +94,28 @@ public class SimPrintsRegisterActivity extends AppCompatActivity {
                 });
             }
 
+
+
+        }else{
+            showFingerPrintFail(this, new OnDialogButtonClick() {
+                @Override
+                public void onOkButtonClick() {
+                    startRegister();
+                }
+
+                @Override
+                public void onCancelButtonClick() {
+                    Intent returnIntent = new Intent();
+                    setResult(RESULT_CANCELED,returnIntent);
+                    finish();
+                }
+            });
         }
     }
     private void showFingerPrintFail(Context context, final OnDialogButtonClick onDialogButtonClick){
         final AlertDialog alertDialog = new AlertDialog.Builder(context).create();
         alertDialog.setMessage(getString(R.string.fail_result));
+        alertDialog.setCancelable(false);
         alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.scan_again), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {

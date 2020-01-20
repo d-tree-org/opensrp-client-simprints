@@ -27,7 +27,7 @@ public class SimPrintsIdentifyActivity extends AppCompatActivity {
     private int REQUEST_CODE;
     private String moduleId;
 
-    public static void StartSimprintsIdentifyActivity(Activity context, String moduleId, int requestCode){
+    public static void startSimprintsIdentifyActivity(Activity context, String moduleId, int requestCode){
         Intent intent = new Intent(context, SimPrintsIdentifyActivity.class);
         intent.putExtra(Constants.SIMPRINTS_MODULE_ID, moduleId);
         intent.putExtra(PUT_EXTRA_REQUEST_CODE, requestCode);

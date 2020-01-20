@@ -31,6 +31,20 @@ android {
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
+        if (project.rootProject.file("local.properties").exists()) {
+            Properties properties = new Properties()
+            properties.load(project.rootProject.file("local.properties").newDataInputStream())
+            if (properties != null && properties.containsKey("simprints.project.id")) {
+                buildConfigField "String", "SIMPRINTS_PROJECT_ID", properties["simprints.project.id"]
+            } else {
+                println("Simprints project ID is not set in your local.properties")
+                buildConfigField "String", "SIMPRINTS_PROJECT_ID", "\"sample_project_id\""
+            }
+
+        } else {
+            println("local.properties does not exist")
+            buildConfigField "String", "SIMPRINTS_PROJECT_ID", "\"sample_project_id\""
+        }
     }
 
     dexOptions {
