@@ -5,6 +5,7 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.view.View;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 import org.smartregister.simprint.R;
 import org.smartregister.simprint.contract.SimprintsIdentificationRegisterContract;
@@ -12,6 +13,7 @@ import org.smartregister.simprint.fragment.EmptyResultFragment;
 import org.smartregister.simprint.fragment.SimprintsIdentificationRegisterFragment;
 import org.smartregister.simprint.model.SimprintsIdentificationRegisterModel;
 import org.smartregister.simprint.presenter.SimprintsIdentificationRegisterPresenter;
+import org.smartregister.simprint.util.JsonFormUtil;
 import org.smartregister.view.activity.BaseRegisterActivity;
 import org.smartregister.view.fragment.BaseRegisterFragment;
 
@@ -46,8 +48,15 @@ public class SimprintsIdentificationRegisterActivity extends BaseRegisterActivit
     @Override
     protected BaseRegisterFragment getRegisterFragment() {
         ArrayList<String> results = (ArrayList<String>)this.getIntent().getSerializableExtra("result_guids");
-        if (results.size() > 0){
-            return new SimprintsIdentificationRegisterFragment().newInstance(this);
+        ArrayList<String> clientIds = new ArrayList<>();
+        for (String result : results){
+            String baseEntityId = JsonFormUtil.lookForClientBaseEntityIds(result);
+            if (baseEntityId != null && !StringUtils.isEmpty(baseEntityId)){
+                clientIds.add(baseEntityId);
+            }
+        }
+        if (clientIds.size() > 0){
+            return new SimprintsIdentificationRegisterFragment().newInstance(this, clientIds);
         }else {
             return new EmptyResultFragment();
         }
