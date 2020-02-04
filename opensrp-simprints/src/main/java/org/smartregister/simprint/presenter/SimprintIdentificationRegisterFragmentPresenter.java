@@ -62,7 +62,8 @@ public class SimprintIdentificationRegisterFragmentPresenter implements Simprint
     @Override
     public String getMainCondition() {
         //String mainCondition = String.format(" %s is null ", "date_removed");
-        String mainCondition = "";
+        String mainCondition = null;
+
         StringBuilder stringBuilder = new StringBuilder();
         for (int i=0; i<ids.size(); i++){
             stringBuilder.append("'"+ids.get(i)+"'").append(",");
@@ -71,9 +72,8 @@ public class SimprintIdentificationRegisterFragmentPresenter implements Simprint
         if (stringIds.length() > 0){
             mainCondition = String.format(" %s IN ("+stringIds.substring(0, stringIds.length()-1)+") AND %s is null ",
                     DBConstants.KEY.OBJECT_ID, DBConstants.KEY.DATE_REMOVED);
-        }else {
-            mainCondition = String.format(" %s is null ", "date_removed");
         }
+
         return mainCondition;
     }
 
