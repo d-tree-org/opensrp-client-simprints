@@ -142,12 +142,11 @@ public class SimprintsIdentificationRegisterFragment extends
         for(String id : resultsGuid){
 
             String baseEntityId = JsonFormUtil.lookForClientBaseEntityIds(id);
-            baseEntityIds.add(baseEntityId);
-
             if (baseEntityId != null && !baseEntityId.isEmpty()){
                 HashMap<String, String> baseEntitySimprintsId = new HashMap<>();
                 baseEntitySimprintsId.put(baseEntityId, id);
                 guidSimprintsIdMap.add(baseEntitySimprintsId);
+                baseEntityIds.add(baseEntityId);
             }
         }
         presenter = new SimprintIdentificationRegisterFragmentPresenter(this, new SimprintsIdentificationRegisterFragmentModel(), null, baseEntityIds);
