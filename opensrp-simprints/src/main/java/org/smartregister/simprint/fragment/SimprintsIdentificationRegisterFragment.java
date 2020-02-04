@@ -45,13 +45,17 @@ public class SimprintsIdentificationRegisterFragment extends
     private static ArrayList<HashMap<String, String>> guidSimprintsIdMap = new ArrayList<>();
 
     android.content.Context activity;
+    private ArrayList<String> clientIds = new ArrayList<>();
 
     private static SimprintsIdentificationRegisterFragment instance;
 
-    public SimprintsIdentificationRegisterFragment newInstance(Context context){
-        this.activity = context;
+    public SimprintsIdentificationRegisterFragment newInstance(Context context, ArrayList<String> clientIds){
+
         BaseRegisterActivity baseRegisterActivity = (BaseRegisterActivity) context;
         instance = new SimprintsIdentificationRegisterFragment();
+        this.activity = context;
+        this.clientIds = clientIds;
+
         if (baseRegisterActivity != null){
             if (baseRegisterActivity.getIntent().getExtras() != null){
                 sessionID = baseRegisterActivity.getIntent().getExtras().getString(SESSION_ID_EXTRA);
@@ -138,7 +142,6 @@ public class SimprintsIdentificationRegisterFragment extends
         if (getActivity() == null)
             return;
 
-        ArrayList<String> baseEntityIds = new ArrayList<>();
         for(String id : resultsGuid){
 
             String baseEntityId = JsonFormUtil.lookForClientBaseEntityIds(id);
@@ -146,10 +149,9 @@ public class SimprintsIdentificationRegisterFragment extends
                 HashMap<String, String> baseEntitySimprintsId = new HashMap<>();
                 baseEntitySimprintsId.put(baseEntityId, id);
                 guidSimprintsIdMap.add(baseEntitySimprintsId);
-                baseEntityIds.add(baseEntityId);
             }
         }
-        presenter = new SimprintIdentificationRegisterFragmentPresenter(this, new SimprintsIdentificationRegisterFragmentModel(), null, baseEntityIds);
+        presenter = new SimprintIdentificationRegisterFragmentPresenter(this, new SimprintsIdentificationRegisterFragmentModel(), null, clientIds);
     }
 
     @Override
