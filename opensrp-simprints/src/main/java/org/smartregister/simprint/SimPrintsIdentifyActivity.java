@@ -8,10 +8,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.simprints.libsimprints.Constants;
 import com.simprints.libsimprints.Identification;
+import com.simprints.libsimprints.Tier;
 
 import org.smartregister.simprint.activity.SimprintsIdentificationRegisterActivity;
 import org.smartregister.simprint.fragment.SimprintsIdentificationRegisterFragment;
@@ -83,10 +85,16 @@ public class SimPrintsIdentifyActivity extends AppCompatActivity {
             if (check && identifications != null && identifications.size() > 0){
 
                 for (Identification identification : identifications){
-                    SimPrintsIdentification simPrintsIdentification = new SimPrintsIdentification(identification.getGuid());
-                    simPrintsIdentifications.add(simPrintsIdentification);
-                    resultsGuids.add(identification.getGuid());
+                    if (identification.getTier() == Tier.TIER_1){
+                        Log.d("Tire", "Tire One GUID"+identification.getGuid());
+                        SimPrintsIdentification simPrintsIdentification = new SimPrintsIdentification(identification.getGuid());
+                        simPrintsIdentifications.add(simPrintsIdentification);
+                        resultsGuids.add(identification.getGuid());
+                    }
                 }
+
+                Log.d("Tiertest", "Tier One found size is "+resultsGuids.size());
+
             }
 
             /*
