@@ -44,17 +44,17 @@ public class SimprintsIdentificationRegisterFragment extends
     private static ArrayList<String> resultsGuid = new ArrayList<>();
     private static ArrayList<HashMap<String, String>> guidSimprintsIdMap = new ArrayList<>();
 
-    android.content.Context activity;
-    private ArrayList<String> clientIds = new ArrayList<>();
+    private static android.content.Context activity;
+    private static ArrayList<String> clientIds = new ArrayList<>();
 
     private static SimprintsIdentificationRegisterFragment instance;
 
-    public SimprintsIdentificationRegisterFragment newInstance(Context context, ArrayList<String> clientIds){
+    public static SimprintsIdentificationRegisterFragment newInstance(Context context, ArrayList<String> ids){
 
         BaseRegisterActivity baseRegisterActivity = (BaseRegisterActivity) context;
         instance = new SimprintsIdentificationRegisterFragment();
-        this.activity = context;
-        this.clientIds = clientIds;
+        activity = context;
+        clientIds = ids;
 
         if (baseRegisterActivity != null){
             if (baseRegisterActivity.getIntent().getExtras() != null){

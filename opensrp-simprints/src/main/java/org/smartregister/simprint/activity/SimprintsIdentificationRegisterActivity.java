@@ -56,7 +56,7 @@ public class SimprintsIdentificationRegisterActivity extends BaseRegisterActivit
             }
         }
         if (clientIds.size() > 0){
-            return new SimprintsIdentificationRegisterFragment().newInstance(this, clientIds);
+            return SimprintsIdentificationRegisterFragment.newInstance(this, clientIds);
         }else {
             return new EmptyResultFragment();
         }
