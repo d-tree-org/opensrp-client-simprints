@@ -121,7 +121,7 @@ public class SimPrintsIdentifyActivity extends AppCompatActivity {
         }
 
         if (identifications.size() > 3){
-            for (int i=identifications.size()-1; i>=0; i--){
+            for (int i=identifications.size()-1; i>=identifications.size()-4; i--){
                 sortedIdentifications.add(identifications.get(i));
             }
         }else {
