@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,7 @@ import org.smartregister.cursoradapter.RecyclerViewPaginatedAdapter;
 import org.smartregister.simprint.R;
 import org.smartregister.simprint.SimPrintsHelper;
 import org.smartregister.simprint.SimPrintsLibrary;
+import org.smartregister.simprint.activity.SimprintsIdentificationRegisterActivity;
 import org.smartregister.simprint.contract.SimprintsIdentificationRegisterFragmentContract;
 import org.smartregister.simprint.model.SimprintsIdentificationRegisterFragmentModel;
 import org.smartregister.simprint.presenter.SimprintIdentificationRegisterFragmentPresenter;
@@ -38,37 +40,23 @@ public class SimprintsIdentificationRegisterFragment extends
         BaseRegisterFragment implements SimprintsIdentificationRegisterFragmentContract.View {
 
     public static final String SESSION_ID_EXTRA = "session_id";
-    public static final String RESULTS_GUID_EXTRA = "result_guids";
+    public static final String IDS_EXTRA = "result_ids";
 
     private static String sessionID = "";
-    private static ArrayList<String> resultsGuid = new ArrayList<>();
     private static ArrayList<HashMap<String, String>> guidSimprintsIdMap = new ArrayList<>();
 
-    private static android.content.Context activity;
     private static ArrayList<String> clientIds = new ArrayList<>();
 
-    private static SimprintsIdentificationRegisterFragment instance;
+    public static SimprintsIdentificationRegisterFragment newInstance(ArrayList<String> ids, String sessionId){
 
-    public static SimprintsIdentificationRegisterFragment newInstance(Context context, ArrayList<String> ids){
+        SimprintsIdentificationRegisterFragment instance = new SimprintsIdentificationRegisterFragment();
+        Bundle args = new Bundle();
+        args.putStringArrayList(IDS_EXTRA, ids);
+        args.putString(SESSION_ID_EXTRA, sessionId);
+        instance.setArguments(args);
 
-        BaseRegisterActivity baseRegisterActivity = (BaseRegisterActivity) context;
-        instance = new SimprintsIdentificationRegisterFragment();
-        activity = context;
-        clientIds = ids;
-
-        if (baseRegisterActivity != null){
-            if (baseRegisterActivity.getIntent().getExtras() != null){
-                sessionID = baseRegisterActivity.getIntent().getExtras().getString(SESSION_ID_EXTRA);
-                resultsGuid = baseRegisterActivity.getIntent().getExtras().getStringArrayList(RESULTS_GUID_EXTRA);
-            }
-        }
         return instance;
     }
-
-    public SimprintsIdentificationRegisterFragment(){
-    }
-
-
 
     @Override
     public void setupViews(View view) {
@@ -117,10 +105,9 @@ public class SimprintsIdentificationRegisterFragment extends
     public void initializeAdapter(Set<org.smartregister.configurableviews.model.View> visibleColumns) {
 
         boolean resultsAvailable = false;
-        if (!resultsGuid.isEmpty()){
-            if (resultsGuid.size() > 0){
-                resultsAvailable = true;
-            }
+
+        if (clientIds.size() > 0){
+            resultsAvailable = true;
         }
 
         SimprintIdentificationRegisterProvider provider = new SimprintIdentificationRegisterProvider(
@@ -142,15 +129,19 @@ public class SimprintsIdentificationRegisterFragment extends
         if (getActivity() == null)
             return;
 
-        for(String id : resultsGuid){
+        SimprintsIdentificationRegisterActivity activity = (SimprintsIdentificationRegisterActivity)this.getActivity();
+        sessionID = activity.sessionId;
+        clientIds = activity.identifiedClients;
 
-            String baseEntityId = JsonFormUtil.lookForClientBaseEntityIds(id);
-            if (baseEntityId != null && !baseEntityId.isEmpty()){
-                HashMap<String, String> baseEntitySimprintsId = new HashMap<>();
-                baseEntitySimprintsId.put(baseEntityId, id);
-                guidSimprintsIdMap.add(baseEntitySimprintsId);
-            }
+        for(String baseEntityId : clientIds){
+            /**
+             * Map Simprints GUID with Client BaseEntityId to be able to confirm selection back to Simprints
+             */
+            HashMap<String, String> baseEntitySimprintsId = new HashMap<>();
+            baseEntitySimprintsId.put(baseEntityId, ""); //TODO Pass the corresponding simprints GUID
+            guidSimprintsIdMap.add(baseEntitySimprintsId);
         }
+
         presenter = new SimprintIdentificationRegisterFragmentPresenter(this, new SimprintsIdentificationRegisterFragmentModel(), null, clientIds);
     }
 
