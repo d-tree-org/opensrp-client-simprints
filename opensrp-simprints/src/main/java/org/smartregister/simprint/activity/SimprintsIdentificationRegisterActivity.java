@@ -1,6 +1,7 @@
 package org.smartregister.simprint.activity;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.view.View;
@@ -25,6 +26,14 @@ import java.util.List;
  */
 public class SimprintsIdentificationRegisterActivity extends BaseRegisterActivity implements SimprintsIdentificationRegisterContract.View {
 
+    public static final String RESULTS_LIST_EXTRA = "results_list";
+    public static final String CURRENT_SESSION_EXTRA = "current_session";
+
+    public ArrayList<String> identifiedClients = new ArrayList<>();
+    public String sessionId = "";
+
+    private ArrayList<String> resultsList = new ArrayList<>();
+
     public SimprintsIdentificationRegisterActivity(){
 
     }
@@ -47,16 +56,25 @@ public class SimprintsIdentificationRegisterActivity extends BaseRegisterActivit
 
     @Override
     protected BaseRegisterFragment getRegisterFragment() {
-        ArrayList<String> results = (ArrayList<String>)this.getIntent().getSerializableExtra("result_guids");
+
+        Bundle bundle = this.getIntent().getExtras();
+        if (bundle != null){
+            resultsList = bundle.getStringArrayList(RESULTS_LIST_EXTRA);
+            sessionId = bundle.getString(CURRENT_SESSION_EXTRA);
+
+        }
+
         ArrayList<String> clientIds = new ArrayList<>();
-        for (String result : results){
-            String baseEntityId = JsonFormUtil.lookForClientBaseEntityIds(result);
+        for (String clientSimprintsId : resultsList){
+            String baseEntityId = JsonFormUtil.lookForClientBaseEntityIds(clientSimprintsId);
             if (baseEntityId != null && !StringUtils.isEmpty(baseEntityId)){
                 clientIds.add(baseEntityId);
             }
         }
+
         if (clientIds.size() > 0){
-            return SimprintsIdentificationRegisterFragment.newInstance(this, clientIds);
+            identifiedClients = clientIds;
+            return SimprintsIdentificationRegisterFragment.newInstance(clientIds, sessionId);
         }else {
             return new EmptyResultFragment();
         }
