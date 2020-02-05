@@ -1,15 +1,12 @@
 package org.smartregister.simprint.fragment;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.LayoutInflater;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import org.smartregister.commonregistry.CommonPersonObject;
@@ -23,15 +20,11 @@ import org.smartregister.simprint.contract.SimprintsIdentificationRegisterFragme
 import org.smartregister.simprint.model.SimprintsIdentificationRegisterFragmentModel;
 import org.smartregister.simprint.presenter.SimprintIdentificationRegisterFragmentPresenter;
 import org.smartregister.simprint.provider.SimprintIdentificationRegisterProvider;
-import org.smartregister.simprint.util.JsonFormUtil;
-import org.smartregister.simprint.util.Utils;
-import org.smartregister.view.activity.BaseRegisterActivity;
 import org.smartregister.view.customcontrols.CustomFontTextView;
 import org.smartregister.view.fragment.BaseRegisterFragment;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 
 import static org.smartregister.simprint.util.Utils.convertDpToPixel;

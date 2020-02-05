@@ -6,20 +6,17 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+
 import android.widget.Toast;
 
 import com.simprints.libsimprints.Constants;
 import com.simprints.libsimprints.Identification;
-import com.simprints.libsimprints.Tier;
 
 import org.smartregister.simprint.activity.SimprintsIdentificationRegisterActivity;
-import org.smartregister.simprint.fragment.SimprintsIdentificationRegisterFragment;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import static com.simprints.libsimprints.Constants.SIMPRINTS_PACKAGE_NAME;
 
