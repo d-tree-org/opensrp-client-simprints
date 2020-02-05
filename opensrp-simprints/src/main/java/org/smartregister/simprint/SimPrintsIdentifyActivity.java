@@ -19,6 +19,7 @@ import org.smartregister.simprint.activity.SimprintsIdentificationRegisterActivi
 import org.smartregister.simprint.fragment.SimprintsIdentificationRegisterFragment;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import static com.simprints.libsimprints.Constants.SIMPRINTS_PACKAGE_NAME;
 
@@ -75,38 +76,20 @@ public class SimPrintsIdentifyActivity extends AppCompatActivity {
             ArrayList<Identification> identifications = data
                 .getParcelableArrayListExtra(Constants.SIMPRINTS_IDENTIFICATIONS);
 
-            //Use this later to filter confidence level of the results
-            ArrayList<SimPrintsIdentification> simPrintsIdentifications = new ArrayList<>();
-
             ArrayList<String> resultsGuids = new ArrayList<>();
             String sessionId = "";
             sessionId = data.getStringExtra("sessionId");
 
             if (check && identifications != null && identifications.size() > 0){
-
-                for (Identification identification : identifications){
-                    if (identification.getTier() == Tier.TIER_1){
-                        Log.d("Tire", "Tire One GUID"+identification.getGuid());
-                        SimPrintsIdentification simPrintsIdentification = new SimPrintsIdentification(identification.getGuid());
-                        simPrintsIdentifications.add(simPrintsIdentification);
-                        resultsGuids.add(identification.getGuid());
-                    }
+                ArrayList<Identification> topResults = getTopResults(identifications);
+                for (Identification identification : topResults){
+                    resultsGuids.add(identification.getGuid());
                 }
-
-                Log.d("Tiertest", "Tier One found size is "+resultsGuids.size());
-
             }
 
-            /*
-            Intent returnIntent = new Intent();
-            returnIntent.putExtra(SimPrintsConstantHelper.INTENT_DATA, simPrintsIdentifications);
-            setResult(RESULT_OK,returnIntent);
-            finish();
-             */
-
             Intent intent = new Intent(this, SimprintsIdentificationRegisterActivity.class);
-            intent.putExtra(SimprintsIdentificationRegisterFragment.SESSION_ID_EXTRA, sessionId);
-            intent.putExtra(SimprintsIdentificationRegisterFragment.RESULTS_GUID_EXTRA, resultsGuids);
+            intent.putExtra(SimprintsIdentificationRegisterActivity.CURRENT_SESSION_EXTRA, sessionId);
+            intent.putExtra(SimprintsIdentificationRegisterActivity.RESULTS_LIST_EXTRA, resultsGuids);
             startActivity(intent);
             finish();
 
@@ -125,6 +108,30 @@ public class SimPrintsIdentifyActivity extends AppCompatActivity {
                 }
             });
         }
+    }
+
+    private ArrayList<Identification> getTopResults(ArrayList<Identification> unsortedIdentifications){
+        ArrayList<Identification> identifications = unsortedIdentifications;
+        ArrayList<Identification> sortedIdentifications = new ArrayList<>();
+        for (int i=0; i<identifications.size(); i++){
+            for (int j=0; j<identifications.size()-1-i; j++){
+                if (identifications.get(j).getConfidence() > identifications.get(j+1).getConfidence()){
+                    Identification tempIdentification = identifications.get(j);
+                    identifications.set(j, identifications.get(j+1));
+                    identifications.set(j+1, tempIdentification);
+                }
+            }
+        }
+
+        if (identifications.size() > 3){
+            for (int i=identifications.size()-1; i>=0; i--){
+                sortedIdentifications.add(identifications.get(i));
+            }
+        }else {
+            sortedIdentifications = identifications;
+        }
+
+        return sortedIdentifications;
     }
 
     private void showFingerPrintFail(Context context, final OnDialogButtonClick onDialogButtonClick){
