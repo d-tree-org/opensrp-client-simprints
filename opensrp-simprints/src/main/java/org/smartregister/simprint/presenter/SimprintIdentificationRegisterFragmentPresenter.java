@@ -29,17 +29,17 @@ public class SimprintIdentificationRegisterFragmentPresenter implements Simprint
     protected Set<View> visibleColumns = new TreeSet<>();
     private String viewConfigurationIdentifier;
 
-    private ArrayList<String> ids;
+    private ArrayList<String> clientIds;
 
     public SimprintIdentificationRegisterFragmentPresenter(SimprintsIdentificationRegisterFragmentContract.View view,
                                                            SimprintsIdentificationRegisterFragmentContract.Model model,
                                                            String viewConfigurationIdentifier,
-                                                           ArrayList<String> ids){
+                                                           ArrayList<String> clientsBaseEntityIds){
         this.viewReference = new WeakReference<>(view);
         this.model = model;
         this.viewConfigurationIdentifier = viewConfigurationIdentifier;
         this.config = model.defaultRegisterConfiguration();
-        this.ids = ids;
+        this.clientIds = clientsBaseEntityIds;
     }
 
     @Override
@@ -65,8 +65,8 @@ public class SimprintIdentificationRegisterFragmentPresenter implements Simprint
         String mainCondition = "";
 
         StringBuilder stringBuilder = new StringBuilder();
-        for (String id : ids){
-            stringBuilder.append("'"+id+"'").append(",");
+        for (String id : clientIds){
+            stringBuilder.append(" '"+id+"'").append(", ");
         }
 
         String stringIds = stringBuilder.toString();
