@@ -65,14 +65,17 @@ public class SimprintIdentificationRegisterFragmentPresenter implements Simprint
         String mainCondition = "";
 
         StringBuilder stringBuilder = new StringBuilder();
-        for (String id : clientIds){
-            stringBuilder.append(" '"+id+"'").append(", ");
+        for (int i=0; i<clientIds.size(); i++){
+            stringBuilder.append(" '"+clientIds.get(i)+"'");
+            if (i != clientIds.size()-1){
+                stringBuilder.append(", ");
+            }
         }
 
         String stringIds = stringBuilder.toString();
         if (stringIds.length() > 0){
-            mainCondition = String.format(" %s IN ("+stringIds.substring(0, stringIds.length()-1)+") AND %s is null ",
-                    DBConstants.KEY.BASE_ENTITY_ID, DBConstants.KEY.DATE_REMOVED);
+            mainCondition = String.format(" %s IN ("+stringIds+") AND %s is null ",
+                    DBConstants.KEY.OBJECT_ID, DBConstants.KEY.DATE_REMOVED);
         }
 
         return mainCondition;
