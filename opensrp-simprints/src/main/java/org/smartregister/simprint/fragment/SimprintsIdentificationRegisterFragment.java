@@ -40,15 +40,10 @@ public class SimprintsIdentificationRegisterFragment extends
 
     private static ArrayList<String> clientIds = new ArrayList<>();
 
-    public static SimprintsIdentificationRegisterFragment newInstance(ArrayList<String> ids, String sessionId){
-
-        SimprintsIdentificationRegisterFragment instance = new SimprintsIdentificationRegisterFragment();
-        Bundle args = new Bundle();
-        args.putStringArrayList(IDS_EXTRA, ids);
-        args.putString(SESSION_ID_EXTRA, sessionId);
-        instance.setArguments(args);
-
-        return instance;
+    public SimprintsIdentificationRegisterFragment(ArrayList<String> results, String sessionId){
+        super();
+        clientIds = results;
+        sessionID = sessionId;
     }
 
     @Override
@@ -97,14 +92,8 @@ public class SimprintsIdentificationRegisterFragment extends
     @Override
     public void initializeAdapter(Set<org.smartregister.configurableviews.model.View> visibleColumns) {
 
-        boolean resultsAvailable = false;
-
-        if (clientIds.size() > 0){
-            resultsAvailable = true;
-        }
-
         SimprintIdentificationRegisterProvider provider = new SimprintIdentificationRegisterProvider(
-                getActivity(),commonRepository(), visibleColumns, registerActionHandler, paginationViewHandler, resultsAvailable);
+                getActivity(),commonRepository(), visibleColumns, registerActionHandler, paginationViewHandler);
         this.clientAdapter = new RecyclerViewPaginatedAdapter(null, provider, context().commonrepository(this.tablename));
         this.clientAdapter.setCurrentlimit(20);
         clientsView.setAdapter(clientAdapter);
@@ -122,9 +111,9 @@ public class SimprintsIdentificationRegisterFragment extends
         if (getActivity() == null)
             return;
 
-        SimprintsIdentificationRegisterActivity activity = (SimprintsIdentificationRegisterActivity)this.getActivity();
-        sessionID = activity.sessionId;
-        clientIds = activity.identifiedClients;
+//        SimprintsIdentificationRegisterActivity activity = (SimprintsIdentificationRegisterActivity)this.getActivity();
+//        sessionID = activity.sessionId;
+//        clientIds = activity.identifiedClients;
 
         for(String baseEntityId : clientIds){
             /**
