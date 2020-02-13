@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import androidx.fragment.app.Fragment;
+
+import android.util.Pair;
 import android.view.View;
 
 import org.apache.commons.lang3.StringUtils;
@@ -20,6 +22,7 @@ import org.smartregister.view.fragment.BaseRegisterFragment;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Author : Isaya Mollel on 2019-12-09.
@@ -29,7 +32,6 @@ public class SimprintsIdentificationRegisterActivity extends BaseRegisterActivit
     public static final String RESULTS_LIST_EXTRA = "results_list";
     public static final String CURRENT_SESSION_EXTRA = "current_session";
 
-    public ArrayList<String> identifiedClients = new ArrayList<>();
     public String sessionId = "";
 
     private ArrayList<String> resultsList = new ArrayList<>();
@@ -64,17 +66,18 @@ public class SimprintsIdentificationRegisterActivity extends BaseRegisterActivit
 
         }
 
-        ArrayList<String> clientIds = new ArrayList<>();
+        ArrayList<Pair<String, String>> simprintsBaseEntityPairs = new ArrayList<>();
+
         for (String clientSimprintsId : resultsList){
             String baseEntityId = JsonFormUtil.lookForClientBaseEntityIds(clientSimprintsId);
             if (baseEntityId != null && !StringUtils.isEmpty(baseEntityId)){
-                clientIds.add(baseEntityId);
+                Pair<String, String> pair = new Pair<>(clientSimprintsId, baseEntityId);
+                simprintsBaseEntityPairs.add(pair);
             }
         }
 
-        if (clientIds.size() > 0){
-            identifiedClients = clientIds;
-            return new SimprintsIdentificationRegisterFragment(clientIds, sessionId);
+        if (simprintsBaseEntityPairs.size() > 0){
+            return new SimprintsIdentificationRegisterFragment(simprintsBaseEntityPairs, sessionId);
         }else {
             return new EmptyResultFragment();
         }
