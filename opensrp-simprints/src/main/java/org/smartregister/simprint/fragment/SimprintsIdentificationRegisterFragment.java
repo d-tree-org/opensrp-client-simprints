@@ -6,6 +6,7 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 
+import android.util.Pair;
 import android.view.View;
 import android.widget.LinearLayout;
 
@@ -15,7 +16,6 @@ import org.smartregister.cursoradapter.RecyclerViewPaginatedAdapter;
 import org.smartregister.simprint.R;
 import org.smartregister.simprint.SimPrintsHelper;
 import org.smartregister.simprint.SimPrintsLibrary;
-import org.smartregister.simprint.activity.SimprintsIdentificationRegisterActivity;
 import org.smartregister.simprint.contract.SimprintsIdentificationRegisterFragmentContract;
 import org.smartregister.simprint.model.SimprintsIdentificationRegisterFragmentModel;
 import org.smartregister.simprint.presenter.SimprintIdentificationRegisterFragmentPresenter;
@@ -32,17 +32,17 @@ import static org.smartregister.simprint.util.Utils.convertDpToPixel;
 public class SimprintsIdentificationRegisterFragment extends
         BaseRegisterFragment implements SimprintsIdentificationRegisterFragmentContract.View {
 
-    public static final String SESSION_ID_EXTRA = "session_id";
-    public static final String IDS_EXTRA = "result_ids";
-
     private static String sessionID = "";
-    private static ArrayList<HashMap<String, String>> guidSimprintsIdMap = new ArrayList<>();
+    private static ArrayList<Pair<String, String>> simprintsIdBaseEntityIdPair = new ArrayList<>();
 
     private static ArrayList<String> clientIds = new ArrayList<>();
 
-    public SimprintsIdentificationRegisterFragment(ArrayList<String> results, String sessionId){
+    public SimprintsIdentificationRegisterFragment(ArrayList<Pair<String, String>> results, String sessionId){
         super();
-        clientIds = results;
+        simprintsIdBaseEntityIdPair = results;
+        for (Pair<String, String> pair : results){
+            clientIds.add(pair.second);
+        }
         sessionID = sessionId;
     }
 
@@ -110,20 +110,6 @@ public class SimprintsIdentificationRegisterFragment extends
 
         if (getActivity() == null)
             return;
-
-//        SimprintsIdentificationRegisterActivity activity = (SimprintsIdentificationRegisterActivity)this.getActivity();
-//        sessionID = activity.sessionId;
-//        clientIds = activity.identifiedClients;
-
-        for(String baseEntityId : clientIds){
-            /**
-             * Map Simprints GUID with Client BaseEntityId to be able to confirm selection back to Simprints
-             */
-            HashMap<String, String> baseEntitySimprintsId = new HashMap<>();
-            baseEntitySimprintsId.put(baseEntityId, ""); //TODO Pass the corresponding simprints GUID
-            guidSimprintsIdMap.add(baseEntitySimprintsId);
-        }
-
         presenter = new SimprintIdentificationRegisterFragmentPresenter(this, new SimprintsIdentificationRegisterFragmentModel(), null, clientIds);
     }
 
@@ -173,8 +159,8 @@ public class SimprintsIdentificationRegisterFragment extends
             }
         }
     }
-    public void handleNoneSelected(android.view.View view) {
-        String sessionid = this.getActivity().getIntent().getStringExtra("session_id");
+    private void handleNoneSelected(android.view.View view) {
+        String sessionid = sessionID;
         // A call back to SimPrint to notify that none of the item on the list was selected
         org.smartregister.family.util.Utils.startAsyncTask(new ConfirmIdentificationTask(sessionid, "none_selected"), null);
 
@@ -182,14 +168,14 @@ public class SimprintsIdentificationRegisterFragment extends
     }
 
 
-    public void goToFamilyProfileActivity(android.view.View view) {
+    private void goToFamilyProfileActivity(android.view.View view) {
         if (view.getTag() instanceof CommonPersonObjectClient) {
             CommonPersonObjectClient pc = (CommonPersonObjectClient) view.getTag();
 
             //SimPrint Confirmation of the selected client
             String baseEntityId = pc.entityId();
             String simPrintsGuid = getSimPrintGuid(baseEntityId);
-            String sessionid = this.getActivity().getIntent().getStringExtra("session_id");
+            String sessionid = sessionID;
             org.smartregister.family.util.Utils.startAsyncTask(new ConfirmIdentificationTask(sessionid, simPrintsGuid), null);
 
             // Get values to start the family profile
@@ -218,12 +204,10 @@ public class SimprintsIdentificationRegisterFragment extends
     }
 
     private String getSimPrintGuid(String baseEntityId) {
-
         String simprintsGuid = "";
-
-        for (HashMap hashMap : guidSimprintsIdMap){
-            if (hashMap.containsKey(baseEntityId)){
-                simprintsGuid = (String)hashMap.get(baseEntityId);
+        for (Pair<String, String> pair : simprintsIdBaseEntityIdPair){
+            if (pair.second.equals(baseEntityId)){
+                simprintsGuid = pair.first;
             }
         }
         return simprintsGuid;
@@ -239,7 +223,7 @@ public class SimprintsIdentificationRegisterFragment extends
         private String sessiodId;
         private String selectedGuid;
 
-        public ConfirmIdentificationTask(String sessiodId, String selectedGuid) {
+        private ConfirmIdentificationTask(String sessiodId, String selectedGuid) {
             this.sessiodId = sessiodId;
             this.selectedGuid = selectedGuid;
         }
