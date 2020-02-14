@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -47,11 +48,17 @@ public class SimPrintsRegisterActivity extends AppCompatActivity {
 
     }
     private void startRegister(){
+        SharedPreferences preferences = getApplication().getSharedPreferences("AllSharedPreferences", MODE_PRIVATE);
+        Boolean is_research_enabled = preferences.getBoolean("IS_SIMPRINTS_RESEARCH_ENABLED", false);
         try{
-            SimPrintsHelper simprintsHelper = new SimPrintsHelper(SimPrintsLibrary.getInstance().getProjectId(),
-                    SimPrintsLibrary.getInstance().getUserId());
-            Intent intent = simprintsHelper.enroll(moduleId);
-            startActivityForResult(intent,REQUEST_CODE);
+//            SimPrintsHelper simprintsHelper = new SimPrintsHelper(SimPrintsLibrary.getInstance().getProjectId(),
+//                    SimPrintsLibrary.getInstance().getUserId());
+//            Intent intent = simprintsHelper.enroll(moduleId);
+//            startActivityForResult(intent,REQUEST_CODE);
+            SimPrintsHelperResearch simPrintsHelperResearch = new SimPrintsHelperResearch(SimPrintsLibrary.getInstance().getProjectId(),
+                    SimPrintsLibrary.getInstance().getUserId(), "13");
+            Intent intent = simPrintsHelperResearch.register(moduleId);
+            startActivityForResult(intent, REQUEST_CODE);
         }catch (IllegalStateException e){
             Toast.makeText(this,e.getMessage(),Toast.LENGTH_LONG).show();
             finish();
