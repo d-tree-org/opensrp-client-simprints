@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primary_color">#8A1A51</color>
+    <color name="primary_dark_color">#660d39</color>
+
+    <color name="colorPrimary">#8A1A51</color>
+    <color name="colorPrimaryDark">#660d39</color>
+    <color name="colorAccent">#8A1A51</color>
+
+    <color name="colorWhite">#FFFFFF</color>
+
+    <color name="visit_status_not_yet">@android:color/darker_gray</color>
+
+</resources>

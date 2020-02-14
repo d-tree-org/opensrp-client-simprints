@@ -4,7 +4,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath "com.android.tools.build:gradle:3.1.2"
+        classpath 'com.android.tools.build:gradle:3.5.2'
         classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.2'
     }
 }
@@ -29,8 +29,22 @@ android {
         versionCode 1
         versionName "1.0"
         multiDexEnabled true
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
+        if (project.rootProject.file("local.properties").exists()) {
+            Properties properties = new Properties()
+            properties.load(project.rootProject.file("local.properties").newDataInputStream())
+            if (properties != null && properties.containsKey("simprints.project.id")) {
+                buildConfigField "String", "SIMPRINTS_PROJECT_ID", properties["simprints.project.id"]
+            } else {
+                println("Simprints project ID is not set in your local.properties")
+                buildConfigField "String", "SIMPRINTS_PROJECT_ID", "\"sample_project_id\""
+            }
+
+        } else {
+            println("local.properties does not exist")
+            buildConfigField "String", "SIMPRINTS_PROJECT_ID", "\"sample_project_id\""
+        }
     }
 
     dexOptions {
@@ -75,11 +89,16 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'com.android.support:appcompat-v7:28.0.0'
-    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+    implementation 'androidx.appcompat:appcompat:1.0.0'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     testImplementation 'junit:junit:4.12'
     implementation project(':opensrp-simprints')
     implementation 'com.simprints:libsimprints:2019.3.1'
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
+
+    implementation('org.smartregister:opensrp-client-core:1.8.10-SNAPSHOT@aar') {
+        transitive = true
+    }
+
 }

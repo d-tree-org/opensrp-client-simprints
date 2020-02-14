@@ -19,4 +19,4 @@ project.properties
 .settings
 build/
 jacoco.exec
-github.properties
+/github.properties

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">opensrp_simprint</string>
+    <string name="guid_not_found">GUID haijapatikana</string>
+    <string name="fail_result">Imeshindwa kupata majibu</string>
+    <string name="scan_again">Scan tena</string>
+    <string name="cancel">Sitisha</string>
+
+    <string name="fingerprint_identification_title">Tambua alama za vidole</string>
+
+    <string name="none_of_above">Hakuna yoyote</string>
+
+</resources>
