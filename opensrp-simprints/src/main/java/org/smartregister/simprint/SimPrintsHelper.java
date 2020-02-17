@@ -24,8 +24,8 @@ public class SimPrintsHelper {
         return simHelper.identify(moduleId);
     }
 
-    public void confirmIdentity(Context context, String sessionId, String selectedGuid){
-        simHelper.confirmIdentity(context, sessionId, selectedGuid);
+    public Intent confirmIdentity(Context context, String sessionId, String selectedGuid){
+        return simHelper.confirmIdentity(context, sessionId, selectedGuid);
     }
 
 }
