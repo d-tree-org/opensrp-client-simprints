@@ -10,12 +10,15 @@ import android.util.Pair;
 import android.view.View;
 import android.widget.LinearLayout;
 
+import com.simprints.libsimprints.SimHelper;
+
 import org.smartregister.commonregistry.CommonPersonObject;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.cursoradapter.RecyclerViewPaginatedAdapter;
 import org.smartregister.simprint.R;
 import org.smartregister.simprint.SimPrintsHelper;
 import org.smartregister.simprint.SimPrintsLibrary;
+import org.smartregister.simprint.activity.SimprintsIdentificationRegisterActivity;
 import org.smartregister.simprint.contract.SimprintsIdentificationRegisterFragmentContract;
 import org.smartregister.simprint.model.SimprintsIdentificationRegisterFragmentModel;
 import org.smartregister.simprint.presenter.SimprintIdentificationRegisterFragmentPresenter;
@@ -23,10 +26,12 @@ import org.smartregister.simprint.provider.SimprintIdentificationRegisterProvide
 import org.smartregister.view.customcontrols.CustomFontTextView;
 import org.smartregister.view.fragment.BaseRegisterFragment;
 
+import java.net.PasswordAuthentication;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 
+import static org.smartregister.simprint.activity.SimprintsIdentificationRegisterActivity.REQUEST_CODE;
 import static org.smartregister.simprint.util.Utils.convertDpToPixel;
 
 public class SimprintsIdentificationRegisterFragment extends
@@ -34,6 +39,7 @@ public class SimprintsIdentificationRegisterFragment extends
 
     private static String sessionID = "";
     private static ArrayList<Pair<String, String>> simprintsIdBaseEntityIdPair = new ArrayList<>();
+    private CommonPersonObject patient;
 
     private static ArrayList<String> clientIds = new ArrayList<>();
 
@@ -143,13 +149,13 @@ public class SimprintsIdentificationRegisterFragment extends
 
         if (view.getId() == R.id.patient_column){
             if (view.getTag() != null && view.getTag(R.id.VIEW_ID) == "click_view_normal") {
-                goToFamilyProfileActivity(view);
+                confirmSelectedClient(view);
             }
         }
 
         if (view.getId() == R.id.next_arrow){
             if (view.getTag() != null && view.getTag(R.id.VIEW_ID) == "click_next_arrow") {
-                goToFamilyProfileActivity(view);
+                confirmSelectedClient(view);
             }
         }
 
@@ -162,13 +168,12 @@ public class SimprintsIdentificationRegisterFragment extends
     private void handleNoneSelected(android.view.View view) {
         String sessionid = sessionID;
         // A call back to SimPrint to notify that none of the item on the list was selected
-        org.smartregister.family.util.Utils.startAsyncTask(new ConfirmIdentificationTask(sessionid, "none_selected"), null);
-
-        this.getActivity().finish();
+        SimprintsIdentificationRegisterActivity activity = (SimprintsIdentificationRegisterActivity) this.getActivity();
+        activity.startSimPrintsConfirmation(sessionid, "none_selected", null);
     }
 
 
-    private void goToFamilyProfileActivity(android.view.View view) {
+    private void confirmSelectedClient(android.view.View view) {
         if (view.getTag() instanceof CommonPersonObjectClient) {
             CommonPersonObjectClient pc = (CommonPersonObjectClient) view.getTag();
 
@@ -176,25 +181,12 @@ public class SimprintsIdentificationRegisterFragment extends
             String baseEntityId = pc.entityId();
             String simPrintsGuid = getSimPrintGuid(baseEntityId);
             String sessionid = sessionID;
-            org.smartregister.family.util.Utils.startAsyncTask(new ConfirmIdentificationTask(sessionid, simPrintsGuid), null);
-
-            // Get values to start the family profile
+            SimprintsIdentificationRegisterActivity activity = (SimprintsIdentificationRegisterActivity) this.getActivity();
             String relational_id = org.smartregister.family.util.Utils.getValue(pc.getColumnmaps(), "relationalid", false);
-            CommonPersonObject patient = org.smartregister.family.util.Utils.context().commonrepository(org.smartregister.family.util.Utils.metadata().familyRegister.tableName)
+            patient = org.smartregister.family.util.Utils.context().commonrepository(org.smartregister.family.util.Utils.metadata().familyRegister.tableName)
                     .findByCaseID(relational_id);
-            Intent intent = new Intent(this.getActivity(), org.smartregister.family.util.Utils.metadata().profileActivity);
-            intent.putExtra("family_base_entity_id", patient.getCaseId());
-            intent.putExtra("family_head",
-                    org.smartregister.family.util.Utils.getValue(patient.getColumnmaps(), "family_head", false));
-            intent.putExtra("primary_caregiver",
-                    org.smartregister.family.util.Utils.getValue(patient.getColumnmaps(), "primary_caregiver", false));
-            intent.putExtra("village_town",
-                    org.smartregister.family.util.Utils.getValue(patient.getColumnmaps(), "village_town", false));
-            intent.putExtra("family_name",
-                    org.smartregister.family.util.Utils.getValue(patient.getColumnmaps(), "first_name", false));
-            intent.putExtra("go_to_due_page", false);
-            this.startActivity(intent);
-            this.getActivity().finish();
+            activity.startSimPrintsConfirmation(sessionid, simPrintsGuid, patient);
+
         }
     }
 
@@ -212,32 +204,6 @@ public class SimprintsIdentificationRegisterFragment extends
         }
         return simprintsGuid;
 
-    }
-
-    ////////////////////////////////////////////////////////////////////
-    //      Inner Class | SimPrints Identification Confirmation
-    ///////////////////////////////////////////////////////////////////
-
-    private class ConfirmIdentificationTask extends AsyncTask<Void, Void, Void> {
-
-        private String sessiodId;
-        private String selectedGuid;
-
-        private ConfirmIdentificationTask(String sessiodId, String selectedGuid) {
-            this.sessiodId = sessiodId;
-            this.selectedGuid = selectedGuid;
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            confirmSelectedGuid(sessiodId, selectedGuid);
-            return null;
-        }
-    }
-
-    private void confirmSelectedGuid(String sessionid, String simPrintsGuid) {
-        SimPrintsHelper simPrintsHelper = new SimPrintsHelper(SimPrintsLibrary.getInstance().getProjectId(), SimPrintsLibrary.getInstance().getUserId());
-        simPrintsHelper.confirmIdentity(this.getActivity(), sessionid, simPrintsGuid);
     }
 
 }
