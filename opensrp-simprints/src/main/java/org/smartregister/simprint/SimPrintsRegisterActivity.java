@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,6 +19,7 @@ import static com.simprints.libsimprints.Constants.SIMPRINTS_PACKAGE_NAME;
 
 public class SimPrintsRegisterActivity extends AppCompatActivity {
 
+    private SharedPreferences preferences;
     private static final String PUT_EXTRA_REQUEST_CODE =  "result_code";
 
 
@@ -41,21 +43,36 @@ public class SimPrintsRegisterActivity extends AppCompatActivity {
             SimPrintsUtils.downloadSimprintIdApk(this);
             return;
         }
+        preferences = getApplication().getSharedPreferences("AllSharedPreferences", MODE_PRIVATE);
         moduleId = getIntent().getStringExtra(Constants.SIMPRINTS_MODULE_ID);
         REQUEST_CODE = getIntent().getIntExtra(PUT_EXTRA_REQUEST_CODE,111);
         startRegister();
 
     }
     private void startRegister(){
-        try{
-            SimPrintsHelper simprintsHelper = new SimPrintsHelper(SimPrintsLibrary.getInstance().getProjectId(),
-                    SimPrintsLibrary.getInstance().getUserId());
-            Intent intent = simprintsHelper.enroll(moduleId);
-            startActivityForResult(intent,REQUEST_CODE);
-        }catch (IllegalStateException e){
-            Toast.makeText(this,e.getMessage(),Toast.LENGTH_LONG).show();
-            finish();
+        Boolean is_reseach_enabled = preferences.getBoolean("IS_SIMPRINTS_RESEARCH_ENABLED", false);
+        if (is_reseach_enabled) {
+            try {
+                SimPrintsHelperResearch simPrintsHelperResearch = new SimPrintsHelperResearch(SimPrintsLibrary.getInstance().getProjectId(),
+                        SimPrintsLibrary.getInstance().getUserId(), "25");
+                Intent intent = simPrintsHelperResearch.register(moduleId);
+                startActivityForResult(intent, REQUEST_CODE);
+            } catch (IllegalStateException e) {
+                Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        } else {
+            try{
+                SimPrintsHelper simprintsHelper = new SimPrintsHelper(SimPrintsLibrary.getInstance().getProjectId(),
+                        SimPrintsLibrary.getInstance().getUserId());
+                Intent intent = simprintsHelper.enroll(moduleId);
+                startActivityForResult(intent,REQUEST_CODE);
+            }catch (IllegalStateException e){
+                Toast.makeText(this,e.getMessage(),Toast.LENGTH_LONG).show();
+                finish();
+            }
         }
+
     }
 
     @Override
