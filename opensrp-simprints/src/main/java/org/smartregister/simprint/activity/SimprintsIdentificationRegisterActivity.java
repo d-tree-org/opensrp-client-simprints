@@ -130,7 +130,10 @@ public class SimprintsIdentificationRegisterActivity extends BaseRegisterActivit
 
     public void startSimPrintsConfirmation(String sessionId, String selectedGuid, CommonPersonObject selectedClient) {
         this.selectedClient = selectedClient;
-        Utils.startAsyncTask(new ConfirmIdentificationTask(this, sessionId, selectedGuid), null);
+        SimHelper simPrintsHelper = new SimHelper(SimPrintsLibrary.getInstance().getProjectId(),
+                SimPrintsLibrary.getInstance().getUserId());
+        Intent intent = simPrintsHelper.confirmIdentity(this, sessionId, selectedGuid);
+        startActivityForResult(intent, REQUEST_CODE);
     }
 
     @Override
