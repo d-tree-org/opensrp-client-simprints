@@ -6,8 +6,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.widget.Toast;
 
@@ -93,23 +93,6 @@ public class SimPrintsRegisterActivity extends AppCompatActivity {
                     }
                 });
             }
-
-
-
-        }else{
-            showFingerPrintFail(this, new OnDialogButtonClick() {
-                @Override
-                public void onOkButtonClick() {
-                    startRegister();
-                }
-
-                @Override
-                public void onCancelButtonClick() {
-                    Intent returnIntent = new Intent();
-                    setResult(RESULT_CANCELED,returnIntent);
-                    finish();
-                }
-            });
         }
     }
     private void showFingerPrintFail(Context context, final OnDialogButtonClick onDialogButtonClick){
