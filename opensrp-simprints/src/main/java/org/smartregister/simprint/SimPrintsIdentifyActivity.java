@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,6 +26,7 @@ import static com.simprints.libsimprints.Constants.SIMPRINTS_PACKAGE_NAME;
  */
 public class SimPrintsIdentifyActivity extends AppCompatActivity {
 
+    private SharedPreferences preferences;
     public static final String PUT_EXTRA_REQUEST_CODE = "result_code";
 
     private int REQUEST_CODE;
@@ -46,12 +48,25 @@ public class SimPrintsIdentifyActivity extends AppCompatActivity {
         }
         moduleId = getIntent().getStringExtra(Constants.SIMPRINTS_MODULE_ID);
         REQUEST_CODE = getIntent().getIntExtra(PUT_EXTRA_REQUEST_CODE, 111);
+        preferences = getApplication().getSharedPreferences("AllSharedPreferences", MODE_PRIVATE);
 
         startIdentification();
 
     }
 
     private void startIdentification(){
+        Boolean is_reseach_enabled = preferences.getBoolean("IS_SIMPRINTS_RESEARCH_ENABLED", false);
+        if (is_reseach_enabled) {
+            try {
+                SimPrintsHelperResearch simPrintsHelperResearch = new SimPrintsHelperResearch(SimPrintsLibrary.getInstance().getProjectId(),
+                        SimPrintsLibrary.getInstance().getUserId(), "25"); //We need to modify here to get age from the form
+                Intent intent = simPrintsHelperResearch.identify(moduleId);
+                startActivityForResult(intent, REQUEST_CODE);
+            } catch (IllegalStateException e) {
+                Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        }
         try{
             SimPrintsHelper simPrintsHelper = new SimPrintsHelper(SimPrintsLibrary.getInstance().getProjectId(),
                     SimPrintsLibrary.getInstance().getUserId());

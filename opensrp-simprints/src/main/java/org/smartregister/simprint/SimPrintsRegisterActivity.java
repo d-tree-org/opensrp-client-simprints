@@ -51,10 +51,10 @@ public class SimPrintsRegisterActivity extends AppCompatActivity {
     }
     private void startRegister(){
         Boolean is_reseach_enabled = preferences.getBoolean("IS_SIMPRINTS_RESEARCH_ENABLED", false);
-        if (is_reseach_enabled) {
+        if (is_reseach_enabled && SimPrintsUtils.isPackageInstalled("com.simprints.riddler", getPackageManager())) {
             try {
                 SimPrintsHelperResearch simPrintsHelperResearch = new SimPrintsHelperResearch(SimPrintsLibrary.getInstance().getProjectId(),
-                        SimPrintsLibrary.getInstance().getUserId(), "25");
+                        SimPrintsLibrary.getInstance().getUserId(), "25"); //We need to modify here to get age from the form
                 Intent intent = simPrintsHelperResearch.register(moduleId);
                 startActivityForResult(intent, REQUEST_CODE);
             } catch (IllegalStateException e) {
