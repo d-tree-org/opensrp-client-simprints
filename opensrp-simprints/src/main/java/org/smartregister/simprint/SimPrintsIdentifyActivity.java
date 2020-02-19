@@ -70,27 +70,30 @@ public class SimPrintsIdentifyActivity extends AppCompatActivity {
         if (data != null && resultCode == RESULT_OK && requestCode == REQUEST_CODE){
 
             Boolean check = data.getBooleanExtra(Constants.SIMPRINTS_BIOMETRICS_COMPLETE_CHECK, false);
-            ArrayList<Identification> identifications = data
-                .getParcelableArrayListExtra(Constants.SIMPRINTS_IDENTIFICATIONS);
+            if (check) {
 
-            ArrayList<String> resultsGuids = new ArrayList<>();
-            String sessionId = "";
-            sessionId = data.getStringExtra("sessionId");
+                ArrayList<Identification> identifications = data
+                        .getParcelableArrayListExtra(Constants.SIMPRINTS_IDENTIFICATIONS);
 
-            if (check && identifications != null && identifications.size() > 0){
-                ArrayList<Identification> topResults = getTopResults(identifications);
-                for (Identification identification : topResults){
-                    resultsGuids.add(identification.getGuid());
+                ArrayList<String> resultsGuids = new ArrayList<>();
+                String sessionId = "";
+                sessionId = data.getStringExtra("sessionId");
+
+                if (check && identifications != null && identifications.size() > 0){
+                    ArrayList<Identification> topResults = getTopResults(identifications);
+                    for (Identification identification : topResults){
+                        resultsGuids.add(identification.getGuid());
+                    }
                 }
-            }
 
-            Intent intent = new Intent(this, SimprintsIdentificationRegisterActivity.class);
-            intent.putExtra(SimprintsIdentificationRegisterActivity.CURRENT_SESSION_EXTRA, sessionId);
-            intent.putExtra(SimprintsIdentificationRegisterActivity.RESULTS_LIST_EXTRA, resultsGuids);
-            startActivity(intent);
-            finish();
+                Intent intent = new Intent(this, SimprintsIdentificationRegisterActivity.class);
+                intent.putExtra(SimprintsIdentificationRegisterActivity.CURRENT_SESSION_EXTRA, sessionId);
+                intent.putExtra(SimprintsIdentificationRegisterActivity.RESULTS_LIST_EXTRA, resultsGuids);
+                startActivity(intent);
+                finish();
+            } else { finish(); }
 
-        }else {
+        } else {
             showFingerPrintFail(this, new OnDialogButtonClick() {
                 @Override
                 public void onOkButtonClick() {
