@@ -19,6 +19,7 @@ import org.smartregister.simprint.activity.SimprintsIdentificationRegisterActivi
 import java.util.ArrayList;
 
 import static com.simprints.libsimprints.Constants.SIMPRINTS_PACKAGE_NAME;
+import static com.simprints.libsimprints.Constants.SIMPRINTS_REFUSAL_FORM;
 
 /**
  * Author : Isaya Mollel on 2019-10-30.
@@ -70,7 +71,7 @@ public class SimPrintsIdentifyActivity extends AppCompatActivity {
         if (data != null && resultCode == RESULT_OK && requestCode == REQUEST_CODE){
 
             Boolean check = data.getBooleanExtra(Constants.SIMPRINTS_BIOMETRICS_COMPLETE_CHECK, false);
-            if (check) {
+            if (check && (data.getParcelableExtra(SIMPRINTS_REFUSAL_FORM) == null)) {
 
                 ArrayList<Identification> identifications = data
                         .getParcelableArrayListExtra(Constants.SIMPRINTS_IDENTIFICATIONS);

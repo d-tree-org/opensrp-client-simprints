@@ -12,6 +12,7 @@ import com.simprints.libsimprints.Constants;
 import com.simprints.libsimprints.Verification;
 
 import static com.simprints.libsimprints.Constants.SIMPRINTS_PACKAGE_NAME;
+import static com.simprints.libsimprints.Constants.SIMPRINTS_REFUSAL_FORM;
 
 public class SimPrintsVerifyActivity extends AppCompatActivity {
 
@@ -57,7 +58,7 @@ public class SimPrintsVerifyActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if( data!=null && resultCode == RESULT_OK && requestCode == REQUEST_CODE){
             Boolean check = data.getBooleanExtra(Constants.SIMPRINTS_BIOMETRICS_COMPLETE_CHECK,false);
-            if(check){
+            if(check && (data.getParcelableExtra(SIMPRINTS_REFUSAL_FORM) == null)){
                 SimPrintsVerification simprintsVerification;
                 Verification verification = data.getParcelableExtra(Constants.SIMPRINTS_VERIFICATION);
                 if(verification == null || TextUtils.isEmpty(verification.getGuid())){
