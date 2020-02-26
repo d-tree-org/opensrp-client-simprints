@@ -7,13 +7,17 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
+import android.os.Parcelable;
+import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.widget.Toast;
 
 import com.simprints.libsimprints.Constants;
 import com.simprints.libsimprints.Registration;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import static com.simprints.libsimprints.Constants.SIMPRINTS_PACKAGE_NAME;
 
@@ -25,13 +29,15 @@ public class SimPrintsRegisterActivity extends AppCompatActivity {
 
     private int REQUEST_CODE;
     private String moduleId;
+    private JSONObject metadata;
 
 
 
-    public static void startSimprintsRegisterActivity(Activity context, String moduleId, int requestCode){
+    public static void startSimprintsRegisterActivity(Activity context, String moduleId, int requestCode, JSONObject metadata){
         Intent intent = new Intent(context, SimPrintsRegisterActivity.class);
         intent.putExtra(Constants.SIMPRINTS_MODULE_ID,moduleId);
         intent.putExtra(PUT_EXTRA_REQUEST_CODE,requestCode);
+        intent.putExtra(Constants.SIMPRINTS_METADATA, metadata.toString());
         context.startActivityForResult(intent,requestCode);
 
     }
@@ -46,6 +52,14 @@ public class SimPrintsRegisterActivity extends AppCompatActivity {
         preferences = getApplication().getSharedPreferences("AllSharedPreferences", MODE_PRIVATE);
         moduleId = getIntent().getStringExtra(Constants.SIMPRINTS_MODULE_ID);
         REQUEST_CODE = getIntent().getIntExtra(PUT_EXTRA_REQUEST_CODE,111);
+
+        if (getIntent().hasExtra(Constants.SIMPRINTS_METADATA)) {
+            try {
+                metadata = new JSONObject(getIntent().getStringExtra(Constants.SIMPRINTS_METADATA));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
         startRegister();
 
     }
@@ -53,11 +67,14 @@ public class SimPrintsRegisterActivity extends AppCompatActivity {
         Boolean is_reseach_enabled = preferences.getBoolean("IS_SIMPRINTS_RESEARCH_ENABLED", false);
         if (is_reseach_enabled && SimPrintsUtils.isPackageInstalled("com.simprints.riddler", getPackageManager())) {
             try {
+                String ageDouble = this.metadata.getString("DOB");
+                // You can use the commented line if age is needed instead of DOB
+                //String age = Integer.toString((int) Double.parseDouble(ageDouble));//Covert the age in string which is a double to a string which is int
                 SimPrintsHelperResearch simPrintsHelperResearch = new SimPrintsHelperResearch(SimPrintsLibrary.getInstance().getProjectId(),
-                        SimPrintsLibrary.getInstance().getUserId(), "25"); //We need to modify here to get age from the form
+                        SimPrintsLibrary.getInstance().getUserId(), ageDouble);
                 Intent intent = simPrintsHelperResearch.register(moduleId);
                 startActivityForResult(intent, REQUEST_CODE);
-            } catch (IllegalStateException e) {
+            } catch (Exception e) {
                 Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
                 finish();
             }
