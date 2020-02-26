@@ -1,9 +1,9 @@
 package org.smartregister.simprint.sample;
 
 import android.content.Intent;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.TextView;
 
@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.capture_finger_print_btn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SimPrintsRegisterActivity.startSimprintsRegisterActivity(MainActivity.this,"mpower",REQUEST_CODE_REGISTER);
+                SimPrintsRegisterActivity.startSimprintsRegisterActivity(MainActivity.this,"mpower",REQUEST_CODE_REGISTER, null);
 
             }
         });

@@ -1,7 +1,7 @@
 package org.smartregister.simprint.fragment;
 
 import android.os.Bundle;
-import androidx.annotation.Nullable;
+import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
