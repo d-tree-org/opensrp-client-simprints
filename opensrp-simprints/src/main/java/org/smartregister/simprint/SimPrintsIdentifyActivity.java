@@ -7,9 +7,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 
+import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
 import com.simprints.libsimprints.Constants;
@@ -32,7 +32,7 @@ public class SimPrintsIdentifyActivity extends AppCompatActivity {
     private int REQUEST_CODE;
     private String moduleId;
 
-    public static void startSimprintsIdentifyActivity(Activity context, String moduleId, int requestCode){
+    public static void startSimprintsIdentifyActivity(Activity context, String moduleId, int requestCode) {
         Intent intent = new Intent(context, SimPrintsIdentifyActivity.class);
         intent.putExtra(Constants.SIMPRINTS_MODULE_ID, moduleId);
         intent.putExtra(PUT_EXTRA_REQUEST_CODE, requestCode);
@@ -42,7 +42,7 @@ public class SimPrintsIdentifyActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(!SimPrintsUtils.isPackageInstalled(SIMPRINTS_PACKAGE_NAME,getPackageManager())){
+        if (!SimPrintsUtils.isPackageInstalled(SIMPRINTS_PACKAGE_NAME, getPackageManager())) {
             SimPrintsUtils.downloadSimprintIdApk(this);
             return;
         }
@@ -54,27 +54,28 @@ public class SimPrintsIdentifyActivity extends AppCompatActivity {
 
     }
 
-    private void startIdentification(){
+    private void startIdentification() {
         Boolean is_reseach_enabled = preferences.getBoolean("IS_SIMPRINTS_RESEARCH_ENABLED", false);
         if (is_reseach_enabled) {
             try {
                 SimPrintsHelperResearch simPrintsHelperResearch = new SimPrintsHelperResearch(SimPrintsLibrary.getInstance().getProjectId(),
-                        SimPrintsLibrary.getInstance().getUserId(), "25"); //We need to modify here to get age from the form
+                        SimPrintsLibrary.getInstance().getUserId());
                 Intent intent = simPrintsHelperResearch.identify(moduleId);
                 startActivityForResult(intent, REQUEST_CODE);
             } catch (IllegalStateException e) {
                 Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
                 finish();
             }
-        }
-        try{
-            SimPrintsHelper simPrintsHelper = new SimPrintsHelper(SimPrintsLibrary.getInstance().getProjectId(),
-                    SimPrintsLibrary.getInstance().getUserId());
-            Intent intent = simPrintsHelper.identify(moduleId);
-            startActivityForResult(intent, REQUEST_CODE);
-        }catch (Exception e){
-            Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
-            finish();
+        } else {
+            try {
+                SimPrintsHelper simPrintsHelper = new SimPrintsHelper(SimPrintsLibrary.getInstance().getProjectId(),
+                        SimPrintsLibrary.getInstance().getUserId());
+                Intent intent = simPrintsHelper.identify(moduleId);
+                startActivityForResult(intent, REQUEST_CODE);
+            } catch (Exception e) {
+                Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+                finish();
+            }
         }
     }
 
@@ -82,19 +83,19 @@ public class SimPrintsIdentifyActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (data != null && resultCode == RESULT_OK && requestCode == REQUEST_CODE){
+        if (data != null && resultCode == RESULT_OK && requestCode == REQUEST_CODE) {
 
             Boolean check = data.getBooleanExtra(Constants.SIMPRINTS_BIOMETRICS_COMPLETE_CHECK, false);
             ArrayList<Identification> identifications = data
-                .getParcelableArrayListExtra(Constants.SIMPRINTS_IDENTIFICATIONS);
+                    .getParcelableArrayListExtra(Constants.SIMPRINTS_IDENTIFICATIONS);
 
             ArrayList<String> resultsGuids = new ArrayList<>();
             String sessionId = "";
             sessionId = data.getStringExtra("sessionId");
 
-            if (check && identifications != null && identifications.size() > 0){
+            if (check && identifications != null && identifications.size() > 0) {
                 ArrayList<Identification> topResults = getTopResults(identifications);
-                for (Identification identification : topResults){
+                for (Identification identification : topResults) {
                     resultsGuids.add(identification.getGuid());
                 }
             }
@@ -105,7 +106,7 @@ public class SimPrintsIdentifyActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
 
-        }else {
+        } else {
             showFingerPrintFail(this, new OnDialogButtonClick() {
                 @Override
                 public void onOkButtonClick() {
@@ -115,38 +116,38 @@ public class SimPrintsIdentifyActivity extends AppCompatActivity {
                 @Override
                 public void onCancelButtonClick() {
                     Intent returnIntent = new Intent();
-                    setResult(RESULT_CANCELED,returnIntent);
+                    setResult(RESULT_CANCELED, returnIntent);
                     finish();
                 }
             });
         }
     }
 
-    private ArrayList<Identification> getTopResults(ArrayList<Identification> unsortedIdentifications){
+    private ArrayList<Identification> getTopResults(ArrayList<Identification> unsortedIdentifications) {
         ArrayList<Identification> identifications = unsortedIdentifications;
         ArrayList<Identification> sortedIdentifications = new ArrayList<>();
-        for (int i=0; i<identifications.size(); i++){
-            for (int j=0; j<identifications.size()-1-i; j++){
-                if (identifications.get(j).getConfidence() > identifications.get(j+1).getConfidence()){
+        for (int i = 0; i < identifications.size(); i++) {
+            for (int j = 0; j < identifications.size() - 1 - i; j++) {
+                if (identifications.get(j).getConfidence() > identifications.get(j + 1).getConfidence()) {
                     Identification tempIdentification = identifications.get(j);
-                    identifications.set(j, identifications.get(j+1));
-                    identifications.set(j+1, tempIdentification);
+                    identifications.set(j, identifications.get(j + 1));
+                    identifications.set(j + 1, tempIdentification);
                 }
             }
         }
 
-        if (identifications.size() > 3){
-            for (int i=identifications.size()-1; i>=identifications.size()-4; i--){
+        if (identifications.size() > 3) {
+            for (int i = identifications.size() - 1; i >= identifications.size() - 4; i--) {
                 sortedIdentifications.add(identifications.get(i));
             }
-        }else {
+        } else {
             sortedIdentifications = identifications;
         }
 
         return sortedIdentifications;
     }
 
-    private void showFingerPrintFail(Context context, final OnDialogButtonClick onDialogButtonClick){
+    private void showFingerPrintFail(Context context, final OnDialogButtonClick onDialogButtonClick) {
         final AlertDialog alertDialog = new AlertDialog.Builder(context).create();
         alertDialog.setMessage(getString(R.string.fail_result));
         alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.scan_again), new DialogInterface.OnClickListener() {

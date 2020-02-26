@@ -4,21 +4,24 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.simprints.libsimprints.Constants;
 import com.simprints.libsimprints.SimHelper;
 
-import androidx.fragment.app.Fragment;
 
+import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.Fragment;
 import android.util.Pair;
 import android.view.View;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 import org.smartregister.commonregistry.CommonPersonObject;
+import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.family.util.Utils;
 import org.smartregister.simprint.R;
+import org.smartregister.simprint.SimPrintsHelperResearch;
 import org.smartregister.simprint.SimPrintsLibrary;
+import org.smartregister.simprint.SimPrintsUtils;
 import org.smartregister.simprint.contract.SimprintsIdentificationRegisterContract;
 import org.smartregister.simprint.fragment.EmptyResultFragment;
 import org.smartregister.simprint.fragment.SimprintsIdentificationRegisterFragment;
@@ -44,7 +47,7 @@ public class SimprintsIdentificationRegisterActivity extends BaseRegisterActivit
 
     private ArrayList<String> resultsList = new ArrayList<>();
     public static final int REQUEST_CODE = 3322;
-    private CommonPersonObject selectedClient;
+    private CommonPersonObject selectedClientFamily;
 
     public SimprintsIdentificationRegisterActivity(){
 
@@ -124,15 +127,44 @@ public class SimprintsIdentificationRegisterActivity extends BaseRegisterActivit
     }
 
     @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
     }
 
-    public void startSimPrintsConfirmation(String sessionId, String selectedGuid, CommonPersonObject selectedClient) {
-        this.selectedClient = selectedClient;
-        SimHelper simPrintsHelper = new SimHelper(SimPrintsLibrary.getInstance().getProjectId(), SimPrintsLibrary.getInstance().getUserId());
-        Intent intent = simPrintsHelper.confirmIdentity(this, sessionId, selectedGuid);
-        startActivityForResult(intent, REQUEST_CODE);
+    public void startSimPrintsConfirmation(String sessionId, String selectedGuid, CommonPersonObjectClient selectedClient) {
+        CommonPersonObject client;
+        String dob = null;
+        if (selectedClient != null) {
+            String relational_id = org.smartregister.family.util.Utils.getValue(selectedClient.getColumnmaps(), "relationalid", false);
+            this.selectedClientFamily = org.smartregister.family.util.Utils.context().commonrepository(org.smartregister.family.util.Utils.metadata().familyRegister.tableName)
+                    .findByCaseID(relational_id);
+            client = Utils.context().commonrepository(Utils.metadata().familyMemberRegister.tableName).findByBaseEntityId(selectedClient.entityId());
+            dob = org.smartregister.family.util.Utils.getValue(client.getColumnmaps(), "dob", false);
+        }
+
+
+        Boolean is_reseach_enabled = getApplication().getSharedPreferences("AllSharedPreferences", MODE_PRIVATE)
+                .getBoolean("IS_SIMPRINTS_RESEARCH_ENABLED", false);
+        if (is_reseach_enabled && SimPrintsUtils.isPackageInstalled("com.simprints.riddler", getPackageManager())) {
+            if (!selectedGuid.equalsIgnoreCase("none_selected")) {
+                SimPrintsHelperResearch simPrintsHelperResearch = new SimPrintsHelperResearch(SimPrintsLibrary.getInstance().getProjectId(),
+                        SimPrintsLibrary.getInstance().getUserId(), dob);
+                Intent intent = simPrintsHelperResearch.confirmIdentity(selectedGuid, sessionId);
+                startActivityForResult(intent, REQUEST_CODE);
+            } else {
+                finish();
+            }
+        } else {
+            SimHelper simPrintsHelper = new SimHelper(SimPrintsLibrary.getInstance().getProjectId(), SimPrintsLibrary.getInstance().getUserId());
+            Intent intent = simPrintsHelper.confirmIdentity(this, sessionId, selectedGuid);
+            startActivityForResult(intent, REQUEST_CODE);
+        }
     }
 
     @Override
@@ -147,17 +179,17 @@ public class SimprintsIdentificationRegisterActivity extends BaseRegisterActivit
 
     private void goTotheFamilyProfileOfSelected() {
 
-        if (selectedClient != null) {
+        if (selectedClientFamily != null) {
             Intent intent = new Intent(this, org.smartregister.family.util.Utils.metadata().profileActivity);
-            intent.putExtra("family_base_entity_id", selectedClient.getCaseId());
+            intent.putExtra("family_base_entity_id", selectedClientFamily.getCaseId());
             intent.putExtra("family_head",
-                    org.smartregister.family.util.Utils.getValue(selectedClient.getColumnmaps(), "family_head", false));
+                    org.smartregister.family.util.Utils.getValue(selectedClientFamily.getColumnmaps(), "family_head", false));
             intent.putExtra("primary_caregiver",
-                    org.smartregister.family.util.Utils.getValue(selectedClient.getColumnmaps(), "primary_caregiver", false));
+                    org.smartregister.family.util.Utils.getValue(selectedClientFamily.getColumnmaps(), "primary_caregiver", false));
             intent.putExtra("village_town",
-                    org.smartregister.family.util.Utils.getValue(selectedClient.getColumnmaps(), "village_town", false));
+                    org.smartregister.family.util.Utils.getValue(selectedClientFamily.getColumnmaps(), "village_town", false));
             intent.putExtra("family_name",
-                    org.smartregister.family.util.Utils.getValue(selectedClient.getColumnmaps(), "first_name", false));
+                    org.smartregister.family.util.Utils.getValue(selectedClientFamily.getColumnmaps(), "first_name", false));
             intent.putExtra("go_to_due_page", false);
             startActivity(intent);
             finish();

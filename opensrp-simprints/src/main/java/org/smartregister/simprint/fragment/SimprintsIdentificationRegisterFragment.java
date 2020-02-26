@@ -1,11 +1,7 @@
 package org.smartregister.simprint.fragment;
 
-import android.content.Intent;
-import android.os.AsyncTask;
-import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
 
+import android.support.v7.widget.Toolbar;
 import android.util.Pair;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -39,7 +35,6 @@ public class SimprintsIdentificationRegisterFragment extends
 
     private static String sessionID = "";
     private static ArrayList<Pair<String, String>> simprintsIdBaseEntityIdPair = new ArrayList<>();
-    private CommonPersonObject patient;
 
     private static ArrayList<String> clientIds = new ArrayList<>();
 
@@ -182,10 +177,8 @@ public class SimprintsIdentificationRegisterFragment extends
             String simPrintsGuid = getSimPrintGuid(baseEntityId);
             String sessionid = sessionID;
             SimprintsIdentificationRegisterActivity activity = (SimprintsIdentificationRegisterActivity) this.getActivity();
-            String relational_id = org.smartregister.family.util.Utils.getValue(pc.getColumnmaps(), "relationalid", false);
-            patient = org.smartregister.family.util.Utils.context().commonrepository(org.smartregister.family.util.Utils.metadata().familyRegister.tableName)
-                    .findByCaseID(relational_id);
-            activity.startSimPrintsConfirmation(sessionid, simPrintsGuid, patient);
+
+            activity.startSimPrintsConfirmation(sessionid, simPrintsGuid, pc);
 
         }
     }
