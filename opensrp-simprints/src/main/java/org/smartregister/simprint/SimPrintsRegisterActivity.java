@@ -14,6 +14,9 @@ import android.widget.Toast;
 import com.simprints.libsimprints.Constants;
 import com.simprints.libsimprints.Registration;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import static com.simprints.libsimprints.Constants.SIMPRINTS_PACKAGE_NAME;
 
 public class SimPrintsRegisterActivity extends AppCompatActivity {
@@ -23,13 +26,15 @@ public class SimPrintsRegisterActivity extends AppCompatActivity {
 
     private int REQUEST_CODE;
     private String moduleId;
+    private JSONObject metadata;
 
 
 
-    public static void startSimprintsRegisterActivity(Activity context, String moduleId, int requestCode){
+    public static void startSimprintsRegisterActivity(Activity context, String moduleId, int requestCode, JSONObject metadata){
         Intent intent = new Intent(context, SimPrintsRegisterActivity.class);
         intent.putExtra(Constants.SIMPRINTS_MODULE_ID,moduleId);
         intent.putExtra(PUT_EXTRA_REQUEST_CODE,requestCode);
+        intent.putExtra(Constants.SIMPRINTS_METADATA, metadata.toString());
         context.startActivityForResult(intent,requestCode);
 
     }
@@ -43,6 +48,15 @@ public class SimPrintsRegisterActivity extends AppCompatActivity {
         }
         moduleId = getIntent().getStringExtra(Constants.SIMPRINTS_MODULE_ID);
         REQUEST_CODE = getIntent().getIntExtra(PUT_EXTRA_REQUEST_CODE,111);
+
+
+        if (getIntent().hasExtra(Constants.SIMPRINTS_METADATA)) {
+            try {
+                metadata = new JSONObject(getIntent().getStringExtra(Constants.SIMPRINTS_METADATA));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
         startRegister();
 
     }

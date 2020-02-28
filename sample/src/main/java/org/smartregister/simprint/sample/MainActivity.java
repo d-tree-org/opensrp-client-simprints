@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.capture_finger_print_btn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SimPrintsRegisterActivity.startSimprintsRegisterActivity(MainActivity.this,"mpower",REQUEST_CODE_REGISTER);
+                SimPrintsRegisterActivity.startSimprintsRegisterActivity(MainActivity.this,"mpower",REQUEST_CODE_REGISTER, null);
 
             }
         });
