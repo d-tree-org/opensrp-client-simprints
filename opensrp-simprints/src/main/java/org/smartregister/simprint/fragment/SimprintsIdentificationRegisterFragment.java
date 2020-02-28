@@ -1,14 +1,9 @@
 package org.smartregister.simprint.fragment;
 
-import android.content.Intent;
-import android.os.AsyncTask;
-import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
-
 import android.util.Pair;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.Toolbar;
 
 import com.simprints.libsimprints.SimHelper;
 
