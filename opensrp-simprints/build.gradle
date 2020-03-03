@@ -83,7 +83,7 @@ def getVersionName = { ->
 }
 
 def getArtificatId = { ->
-    return "opensrp-client-simprints" // Library name
+    return "opensrp-client-simprints-riddler" // Library name
 }
 
 publishing {
