@@ -71,27 +71,36 @@ public class SimPrintsIdentifyActivity extends AppCompatActivity {
         if (data != null && resultCode == RESULT_OK && requestCode == REQUEST_CODE){
 
             Boolean check = data.getBooleanExtra(Constants.SIMPRINTS_BIOMETRICS_COMPLETE_CHECK, false);
-            if (check && (data.getParcelableExtra(SIMPRINTS_REFUSAL_FORM) == null)) {
 
-                ArrayList<Identification> identifications = data
-                        .getParcelableArrayListExtra(Constants.SIMPRINTS_IDENTIFICATIONS);
+            if (check) {
 
-                ArrayList<String> resultsGuids = new ArrayList<>();
-                String sessionId = "";
-                sessionId = data.getStringExtra("sessionId");
+                if (data.getParcelableExtra(SIMPRINTS_REFUSAL_FORM) == null) {
 
-                if (check && identifications != null && identifications.size() > 0){
-                    ArrayList<Identification> topResults = getTopResults(identifications);
-                    for (Identification identification : topResults){
-                        resultsGuids.add(identification.getGuid());
+                    ArrayList<Identification> identifications = data
+                            .getParcelableArrayListExtra(Constants.SIMPRINTS_IDENTIFICATIONS);
+
+                    ArrayList<String> resultsGuids = new ArrayList<>();
+                    String sessionId = "";
+                    sessionId = data.getStringExtra("sessionId");
+
+                    if (check && identifications != null && identifications.size() > 0){
+                        ArrayList<Identification> topResults = getTopResults(identifications);
+                        for (Identification identification : topResults){
+                            resultsGuids.add(identification.getGuid());
+                        }
                     }
+
+                    Intent intent = new Intent(this, SimprintsIdentificationRegisterActivity.class);
+                    intent.putExtra(SimprintsIdentificationRegisterActivity.CURRENT_SESSION_EXTRA, sessionId);
+                    intent.putExtra(SimprintsIdentificationRegisterActivity.RESULTS_LIST_EXTRA, resultsGuids);
+                    startActivity(intent);
+                    finish();
+
+                } else {
+                    Toast.makeText(this, R.string.biometric_declined_message, Toast.LENGTH_SHORT).show();
+                    finish();
                 }
 
-                Intent intent = new Intent(this, SimprintsIdentificationRegisterActivity.class);
-                intent.putExtra(SimprintsIdentificationRegisterActivity.CURRENT_SESSION_EXTRA, sessionId);
-                intent.putExtra(SimprintsIdentificationRegisterActivity.RESULTS_LIST_EXTRA, resultsGuids);
-                startActivity(intent);
-                finish();
             } else { finish(); }
 
         } else {
