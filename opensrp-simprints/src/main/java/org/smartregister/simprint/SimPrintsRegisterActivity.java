@@ -24,6 +24,7 @@ import static com.simprints.libsimprints.Constants.SIMPRINTS_PACKAGE_NAME;
 public class SimPrintsRegisterActivity extends AppCompatActivity {
 
     private SharedPreferences preferences;
+    private Boolean is_reseach_enabled;
     private static final String PUT_EXTRA_REQUEST_CODE =  "result_code";
 
 
@@ -45,11 +46,16 @@ public class SimPrintsRegisterActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(!SimPrintsUtils.isPackageInstalled(SIMPRINTS_PACKAGE_NAME,getPackageManager())){
-            SimPrintsUtils.downloadSimprintIdApk(this);
-            return;
-        }
+
         preferences = getApplication().getSharedPreferences("AllSharedPreferences", MODE_PRIVATE);
+        is_reseach_enabled = preferences.getBoolean("IS_SIMPRINTS_RESEARCH_ENABLED", false);
+        if (!is_reseach_enabled || !SimPrintsUtils.isPackageInstalled("com.simprints.riddler", getPackageManager())){
+            if(!SimPrintsUtils.isPackageInstalled(SIMPRINTS_PACKAGE_NAME,getPackageManager())){
+                SimPrintsUtils.downloadSimprintIdApk(this);
+                return;
+            }
+        }
+
         moduleId = getIntent().getStringExtra(Constants.SIMPRINTS_MODULE_ID);
         REQUEST_CODE = getIntent().getIntExtra(PUT_EXTRA_REQUEST_CODE,111);
 
@@ -64,8 +70,7 @@ public class SimPrintsRegisterActivity extends AppCompatActivity {
 
     }
     private void startRegister(){
-        Boolean is_reseach_enabled = preferences.getBoolean("IS_SIMPRINTS_RESEARCH_ENABLED", false);
-        if (is_reseach_enabled && SimPrintsUtils.isPackageInstalled("com.simprints.riddler", getPackageManager())) {
+        if (is_reseach_enabled) {
             try {
                 String ageDouble = this.metadata.getString("DOB");
                 // You can use the commented line if age is needed instead of DOB

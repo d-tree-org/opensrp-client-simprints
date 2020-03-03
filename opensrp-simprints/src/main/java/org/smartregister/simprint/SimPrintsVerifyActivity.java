@@ -58,29 +58,34 @@ public class SimPrintsVerifyActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if( data!=null && resultCode == RESULT_OK && requestCode == REQUEST_CODE){
             Boolean check = data.getBooleanExtra(Constants.SIMPRINTS_BIOMETRICS_COMPLETE_CHECK,false);
-            if(check && (data.getParcelableExtra(SIMPRINTS_REFUSAL_FORM) == null)){
-                SimPrintsVerification simprintsVerification;
-                Verification verification = data.getParcelableExtra(Constants.SIMPRINTS_VERIFICATION);
-                if(verification == null || TextUtils.isEmpty(verification.getGuid())){
-                    simprintsVerification = new SimPrintsVerification(null);
-                    simprintsVerification.setCheckStatus(false);
-                    simprintsVerification.setTier(null);
-                }else{
-                    simprintsVerification = new SimPrintsVerification(verification.getGuid());
-                    simprintsVerification.setCheckStatus(true);
-                    simprintsVerification.setTier(verification.getTier());
-                }
-                Intent returnIntent = new Intent();
-                returnIntent.putExtra(SimPrintsConstantHelper.INTENT_DATA,simprintsVerification);
-                setResult(RESULT_OK,returnIntent);
-                finish();
-            }else{
+            if(check){
+
+                 if (data.getParcelableExtra(SIMPRINTS_REFUSAL_FORM) == null) {
+                     SimPrintsVerification simprintsVerification;
+                     Verification verification = data.getParcelableExtra(Constants.SIMPRINTS_VERIFICATION);
+                     if(verification == null || TextUtils.isEmpty(verification.getGuid())){
+                         simprintsVerification = new SimPrintsVerification(null);
+                         simprintsVerification.setCheckStatus(false);
+                         simprintsVerification.setTier(null);
+                     }else{
+                         simprintsVerification = new SimPrintsVerification(verification.getGuid());
+                         simprintsVerification.setCheckStatus(true);
+                         simprintsVerification.setTier(verification.getTier());
+                     }
+                     Intent returnIntent = new Intent();
+                     returnIntent.putExtra(SimPrintsConstantHelper.INTENT_DATA,simprintsVerification);
+                     setResult(RESULT_OK,returnIntent);
+                     finish();
+                 } else {
+                     Toast.makeText(this, R.string.biometric_declined_message, Toast.LENGTH_SHORT).show();
+                     finish();
+                 }
+
+            }else {
                 Intent returnIntent = new Intent();
                 setResult(RESULT_CANCELED,returnIntent);
                 finish();
             }
-
-
 
         }
     }
