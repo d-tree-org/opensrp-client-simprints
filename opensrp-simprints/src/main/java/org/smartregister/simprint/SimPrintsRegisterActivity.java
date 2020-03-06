@@ -72,11 +72,11 @@ public class SimPrintsRegisterActivity extends AppCompatActivity {
     private void startRegister(){
         if (is_reseach_enabled) {
             try {
-                String ageDouble = this.metadata.getString("DOB");
+                String dateOfBirth = this.metadata.getString("DOB");
                 // You can use the commented line if age is needed instead of DOB
                 //String age = Integer.toString((int) Double.parseDouble(ageDouble));//Covert the age in string which is a double to a string which is int
                 SimPrintsHelperResearch simPrintsHelperResearch = new SimPrintsHelperResearch(SimPrintsLibrary.getInstance().getProjectId(),
-                        SimPrintsLibrary.getInstance().getUserId(), ageDouble);
+                        SimPrintsLibrary.getInstance().getUserId(), dateOfBirth);
                 Intent intent = simPrintsHelperResearch.register(moduleId);
                 startActivityForResult(intent, REQUEST_CODE);
             } catch (Exception e) {
