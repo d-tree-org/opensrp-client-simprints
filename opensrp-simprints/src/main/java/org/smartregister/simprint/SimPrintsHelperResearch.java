@@ -4,6 +4,10 @@ import android.content.Intent;
 
 import com.simprints.libsimprints.Constants;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class SimPrintsHelperResearch {
 
     final private String projectId;
@@ -26,7 +30,8 @@ public class SimPrintsHelperResearch {
         intent.putExtra(Constants.SIMPRINTS_PROJECT_ID, projectId);
         intent.putExtra(Constants.SIMPRINTS_MODULE_ID, moduleId);
         intent.putExtra("userId", userId);
-        intent.putExtra("age", age);
+        // The age is date of birth
+        intent.putExtra("age", formatDateForRiddler(age));
         return intent;
     }
 
@@ -43,7 +48,22 @@ public class SimPrintsHelperResearch {
         intent.putExtra(Constants.SIMPRINTS_PROJECT_ID, projectId);
         intent.putExtra(Constants.SIMPRINTS_SESSION_ID, sessionId);
         intent.putExtra(Constants.SIMPRINTS_SELECTED_GUID, selectedGuid);
-        intent.putExtra("age", age);
+        // The age is date of birth
+        intent.putExtra("age", formatDateForRiddler(age));
         return intent;
+    }
+
+    private String formatDateForRiddler(String dob) {
+        SimpleDateFormat dateFormatForRiddler = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat dateFormatFromNativeForms = new SimpleDateFormat("dd-MM-yyyy");
+        String formatedDate = null;
+        try {
+            // Get the date from the date picker in Date format for changing it
+            Date dobIndate = dateFormatFromNativeForms.parse(dob);
+            formatedDate = dateFormatForRiddler.format(dobIndate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return formatedDate;
     }
 }
