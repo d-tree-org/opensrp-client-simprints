@@ -34,6 +34,8 @@ public class SimPrintsIdentifyActivity extends AppCompatActivity {
     private int REQUEST_CODE;
     private String moduleId;
 
+    private boolean callRiddler = false;
+
     public static void startSimprintsIdentifyActivity(Activity context, String moduleId, int requestCode) {
         Intent intent = new Intent(context, SimPrintsIdentifyActivity.class);
         intent.putExtra(Constants.SIMPRINTS_MODULE_ID, moduleId);
@@ -46,12 +48,13 @@ public class SimPrintsIdentifyActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         preferences = getApplication().getSharedPreferences("AllSharedPreferences", MODE_PRIVATE);
         is_reseach_enabled = preferences.getBoolean("IS_SIMPRINTS_RESEARCH_ENABLED", false);
-        if (!is_reseach_enabled || !SimPrintsUtils.isPackageInstalled("com.simprints.riddler", getPackageManager())){
-            if(!SimPrintsUtils.isPackageInstalled(SIMPRINTS_PACKAGE_NAME,getPackageManager())){
-                SimPrintsUtils.downloadSimprintIdApk(this);
-                return;
-            }
+
+        boolean appsPresent = checkAppsInstalled(is_reseach_enabled);
+        if (!appsPresent){
+            SimPrintsUtils.downloadSimprintIdApk(this);
+            return;
         }
+
         moduleId = getIntent().getStringExtra(Constants.SIMPRINTS_MODULE_ID);
         REQUEST_CODE = getIntent().getIntExtra(PUT_EXTRA_REQUEST_CODE, 111);
         preferences = getApplication().getSharedPreferences("AllSharedPreferences", MODE_PRIVATE);
@@ -61,7 +64,7 @@ public class SimPrintsIdentifyActivity extends AppCompatActivity {
     }
 
     private void startIdentification() {
-        if (is_reseach_enabled) {
+        if (callRiddler) {
             try {
                 SimPrintsHelperResearch simPrintsHelperResearch = new SimPrintsHelperResearch(SimPrintsLibrary.getInstance().getProjectId(),
                         SimPrintsLibrary.getInstance().getUserId());
@@ -82,6 +85,24 @@ public class SimPrintsIdentifyActivity extends AppCompatActivity {
                 finish();
             }
         }
+    }
+
+    boolean checkAppsInstalled(boolean researchEnabled){
+
+        boolean _results;
+
+        boolean ridlerPresent = SimPrintsUtils.isPackageInstalled("com.simprints.riddler", getPackageManager());
+        boolean isSimprintsIdAvailable = SimPrintsUtils.isPackageInstalled(SIMPRINTS_PACKAGE_NAME,getPackageManager());
+
+        if (!isSimprintsIdAvailable){
+            _results = false;
+        }else {
+            _results = true;
+            if (researchEnabled && ridlerPresent){
+                callRiddler = true;
+            }
+        }
+        return _results;
     }
 
     @Override
