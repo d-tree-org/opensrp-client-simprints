@@ -38,7 +38,7 @@ public class SimPrintsRegisterActivity extends AppCompatActivity {
         Intent intent = new Intent(context, SimPrintsRegisterActivity.class);
         intent.putExtra(Constants.SIMPRINTS_MODULE_ID,moduleId);
         intent.putExtra(PUT_EXTRA_REQUEST_CODE,requestCode);
-        intent.putExtra(Constants.SIMPRINTS_METADATA, metadata.toString());
+        intent.putExtra(Constants.SIMPRINTS_METADATA, String.valueOf(metadata));
         context.startActivityForResult(intent,requestCode);
 
     }
@@ -72,7 +72,8 @@ public class SimPrintsRegisterActivity extends AppCompatActivity {
     private void startRegister(){
         if (is_reseach_enabled) {
             try {
-                String dateOfBirth = this.metadata.getString("DOB");
+                // When the extra_info in native forms is not set for the fingerprint widget, the metadata is null hence you can not get dob
+                String dateOfBirth = (this.metadata != null) ? this.metadata.getString("DOB") : "not_available";
                 // You can use the commented line if age is needed instead of DOB
                 //String age = Integer.toString((int) Double.parseDouble(ageDouble));//Covert the age in string which is a double to a string which is int
                 SimPrintsHelperResearch simPrintsHelperResearch = new SimPrintsHelperResearch(SimPrintsLibrary.getInstance().getProjectId(),
