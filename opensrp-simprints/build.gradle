@@ -154,6 +154,17 @@ allprojects {
     }
 }
 
+repositories {
+    maven {
+        name = "GitHubPackages"
+        url = uri("https://maven.pkg.github.com/issyzac/opensrp-client-core")
+        credentials {
+            username = githubProperties['gpr.usr'] ?: System.getenv("GPR_USER")
+            password = githubProperties['gpr.key'] ?: System.getenv("GPR_API_KEY")
+        }
+    }
+}
+
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.simprints:libsimprints:2019.3.1'
@@ -162,8 +173,9 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 
-    implementation('org.smartregister:opensrp-client-core:1.8.10-SNAPSHOT@aar') {
+    implementation('org.smartregister:opensrp-client-core:1.8.30-DTREE-SNAPSHOT') {
         transitive = true
+        exclude group: 'com.android.support', module: 'appcompat-v7'
     }
 
     implementation('org.smartregister:opensrp-client-family:1.2.26-SNAPSHOT') {
