@@ -18,6 +18,7 @@ import com.simprints.libsimprints.Registration;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.smartregister.CoreLibrary;
 
 import static com.simprints.libsimprints.Constants.SIMPRINTS_PACKAGE_NAME;
 
@@ -56,7 +57,11 @@ public class SimPrintsRegisterActivity extends AppCompatActivity {
             }
         }
 
-        moduleId = getIntent().getStringExtra(Constants.SIMPRINTS_MODULE_ID);
+        //moduleId = getIntent().getStringExtra(Constants.SIMPRINTS_MODULE_ID);
+        moduleId = CoreLibrary.getInstance().context().allSharedPreferences().fetchUserLocalityName("");
+        if (moduleId == null || moduleId.isEmpty() ){
+            moduleId = "global_module";
+        }
         REQUEST_CODE = getIntent().getIntExtra(PUT_EXTRA_REQUEST_CODE,111);
 
         if (getIntent().hasExtra(Constants.SIMPRINTS_METADATA)) {
