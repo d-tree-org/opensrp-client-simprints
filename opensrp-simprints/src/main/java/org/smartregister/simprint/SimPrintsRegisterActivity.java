@@ -31,6 +31,7 @@ public class SimPrintsRegisterActivity extends AppCompatActivity {
 
     private int REQUEST_CODE;
     private String moduleId;
+    private String userId;
     private JSONObject metadata;
 
 
@@ -59,6 +60,8 @@ public class SimPrintsRegisterActivity extends AppCompatActivity {
 
         //moduleId = getIntent().getStringExtra(Constants.SIMPRINTS_MODULE_ID);
         moduleId = CoreLibrary.getInstance().context().allSharedPreferences().fetchUserLocalityName("");
+        userId = CoreLibrary.getInstance().context().allSharedPreferences().fetchRegisteredANM();
+
         if (moduleId == null || moduleId.isEmpty() ){
             moduleId = "global_module";
         }
@@ -82,7 +85,7 @@ public class SimPrintsRegisterActivity extends AppCompatActivity {
                 // You can use the commented line if age is needed instead of DOB
                 //String age = Integer.toString((int) Double.parseDouble(ageDouble));//Covert the age in string which is a double to a string which is int
                 SimPrintsHelperResearch simPrintsHelperResearch = new SimPrintsHelperResearch(SimPrintsLibrary.getInstance().getProjectId(),
-                        SimPrintsLibrary.getInstance().getUserId(), dateOfBirth);
+                        userId, dateOfBirth);
                 Intent intent = simPrintsHelperResearch.register(moduleId);
                 startActivityForResult(intent, REQUEST_CODE);
             } catch (Exception e) {
@@ -92,7 +95,7 @@ public class SimPrintsRegisterActivity extends AppCompatActivity {
         } else {
             try{
                 SimPrintsHelper simprintsHelper = new SimPrintsHelper(SimPrintsLibrary.getInstance().getProjectId(),
-                        SimPrintsLibrary.getInstance().getUserId());
+                        userId);
                 Intent intent = simprintsHelper.enroll(moduleId);
                 startActivityForResult(intent,REQUEST_CODE);
             }catch (IllegalStateException e){

@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.simprints.libsimprints.Constants;
 import com.simprints.libsimprints.Identification;
 
+import org.smartregister.CoreLibrary;
 import org.smartregister.simprint.activity.SimprintsIdentificationRegisterActivity;
 
 import java.util.ArrayList;
@@ -33,10 +34,11 @@ public class SimPrintsIdentifyActivity extends AppCompatActivity {
 
     private int REQUEST_CODE;
     private String moduleId;
+    private String userId;
 
     private boolean callRiddler = false;
 
-    public static void startSimprintsIdentifyActivity(Activity context, String moduleId, int requestCode) {
+    public static void startSimprintsIdentifyActivity(Activity context, String moduleId, String userId, int requestCode) {
         Intent intent = new Intent(context, SimPrintsIdentifyActivity.class);
         intent.putExtra(Constants.SIMPRINTS_MODULE_ID, moduleId);
         intent.putExtra(PUT_EXTRA_REQUEST_CODE, requestCode);
@@ -56,6 +58,8 @@ public class SimPrintsIdentifyActivity extends AppCompatActivity {
         }
 
         moduleId = getIntent().getStringExtra(Constants.SIMPRINTS_MODULE_ID);
+        userId = CoreLibrary.getInstance().context().allSharedPreferences().fetchRegisteredANM();
+
         REQUEST_CODE = getIntent().getIntExtra(PUT_EXTRA_REQUEST_CODE, 111);
         preferences = getApplication().getSharedPreferences("AllSharedPreferences", MODE_PRIVATE);
 
@@ -67,7 +71,7 @@ public class SimPrintsIdentifyActivity extends AppCompatActivity {
         if (callRiddler) {
             try {
                 SimPrintsHelperResearch simPrintsHelperResearch = new SimPrintsHelperResearch(SimPrintsLibrary.getInstance().getProjectId(),
-                        SimPrintsLibrary.getInstance().getUserId());
+                        userId);
                 Intent intent = simPrintsHelperResearch.identify(moduleId);
                 startActivityForResult(intent, REQUEST_CODE);
             } catch (IllegalStateException e) {
@@ -77,7 +81,7 @@ public class SimPrintsIdentifyActivity extends AppCompatActivity {
         } else {
             try {
                 SimPrintsHelper simPrintsHelper = new SimPrintsHelper(SimPrintsLibrary.getInstance().getProjectId(),
-                        SimPrintsLibrary.getInstance().getUserId());
+                        userId);
                 Intent intent = simPrintsHelper.identify(moduleId);
                 startActivityForResult(intent, REQUEST_CODE);
             } catch (Exception e) {
