@@ -38,7 +38,7 @@ public class SimPrintsIdentifyActivity extends AppCompatActivity {
 
     private boolean callRiddler = false;
 
-    public static void startSimprintsIdentifyActivity(Activity context, String moduleId, String userId, int requestCode) {
+    public static void startSimprintsIdentifyActivity(Activity context, String moduleId, int requestCode) {
         Intent intent = new Intent(context, SimPrintsIdentifyActivity.class);
         intent.putExtra(Constants.SIMPRINTS_MODULE_ID, moduleId);
         intent.putExtra(PUT_EXTRA_REQUEST_CODE, requestCode);
@@ -48,6 +48,7 @@ public class SimPrintsIdentifyActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         preferences = getApplication().getSharedPreferences("AllSharedPreferences", MODE_PRIVATE);
         is_reseach_enabled = preferences.getBoolean("IS_SIMPRINTS_RESEARCH_ENABLED", false);
 
@@ -61,7 +62,6 @@ public class SimPrintsIdentifyActivity extends AppCompatActivity {
         userId = CoreLibrary.getInstance().context().allSharedPreferences().fetchRegisteredANM();
 
         REQUEST_CODE = getIntent().getIntExtra(PUT_EXTRA_REQUEST_CODE, 111);
-        preferences = getApplication().getSharedPreferences("AllSharedPreferences", MODE_PRIVATE);
 
         startIdentification();
 
@@ -72,7 +72,7 @@ public class SimPrintsIdentifyActivity extends AppCompatActivity {
             try {
                 SimPrintsHelperResearch simPrintsHelperResearch = new SimPrintsHelperResearch(SimPrintsLibrary.getInstance().getProjectId(),
                         userId);
-                Intent intent = simPrintsHelperResearch.identify(moduleId);
+                Intent intent = simPrintsHelperResearch.identify(moduleId.toLowerCase());
                 startActivityForResult(intent, REQUEST_CODE);
             } catch (IllegalStateException e) {
                 Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -82,7 +82,7 @@ public class SimPrintsIdentifyActivity extends AppCompatActivity {
             try {
                 SimPrintsHelper simPrintsHelper = new SimPrintsHelper(SimPrintsLibrary.getInstance().getProjectId(),
                         userId);
-                Intent intent = simPrintsHelper.identify(moduleId);
+                Intent intent = simPrintsHelper.identify(moduleId.toLowerCase());
                 startActivityForResult(intent, REQUEST_CODE);
             } catch (Exception e) {
                 Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();

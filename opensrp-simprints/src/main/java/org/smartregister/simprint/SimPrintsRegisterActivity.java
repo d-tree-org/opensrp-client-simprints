@@ -86,7 +86,7 @@ public class SimPrintsRegisterActivity extends AppCompatActivity {
                 //String age = Integer.toString((int) Double.parseDouble(ageDouble));//Covert the age in string which is a double to a string which is int
                 SimPrintsHelperResearch simPrintsHelperResearch = new SimPrintsHelperResearch(SimPrintsLibrary.getInstance().getProjectId(),
                         userId, dateOfBirth);
-                Intent intent = simPrintsHelperResearch.register(moduleId);
+                Intent intent = simPrintsHelperResearch.register(moduleId.toLowerCase());
                 startActivityForResult(intent, REQUEST_CODE);
             } catch (Exception e) {
                 Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -96,7 +96,7 @@ public class SimPrintsRegisterActivity extends AppCompatActivity {
             try{
                 SimPrintsHelper simprintsHelper = new SimPrintsHelper(SimPrintsLibrary.getInstance().getProjectId(),
                         userId);
-                Intent intent = simprintsHelper.enroll(moduleId);
+                Intent intent = simprintsHelper.enroll(moduleId.toLowerCase());
                 startActivityForResult(intent,REQUEST_CODE);
             }catch (IllegalStateException e){
                 Toast.makeText(this,e.getMessage(),Toast.LENGTH_LONG).show();
