@@ -165,11 +165,7 @@ public class SimPrintsRegisterActivity extends AppCompatActivity {
     }
 
     private boolean isRiddlerInstalled() {
-        if (SimPrintsUtils.isPackageInstalled("com.simprints.riddler", getPackageManager())) {
-            return true;
-        } else {
-            return false;
-        }
+        return SimPrintsUtils.isPackageInstalled("com.simprints.riddler", getPackageManager());
     }
 
 }
