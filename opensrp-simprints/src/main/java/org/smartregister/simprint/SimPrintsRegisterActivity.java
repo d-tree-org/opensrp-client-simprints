@@ -78,7 +78,7 @@ public class SimPrintsRegisterActivity extends AppCompatActivity {
 
     }
     private void startRegister(){
-        if (is_reseach_enabled) {
+        if (is_reseach_enabled && isRiddlerInstalled()) {
             try {
                 // When the extra_info in native forms is not set for the fingerprint widget, the metadata is null hence you can not get dob
                 String dateOfBirth = (this.metadata != null) ? this.metadata.getString("DOB") : "not_available";
@@ -164,5 +164,12 @@ public class SimPrintsRegisterActivity extends AppCompatActivity {
         alertDialog.show();
     }
 
+    private boolean isRiddlerInstalled() {
+        if (SimPrintsUtils.isPackageInstalled("com.simprints.riddler", getPackageManager())) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
 }
