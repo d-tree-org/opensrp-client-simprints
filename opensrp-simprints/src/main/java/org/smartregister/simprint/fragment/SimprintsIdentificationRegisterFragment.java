@@ -1,6 +1,7 @@
 package org.smartregister.simprint.fragment;
 
 
+import android.annotation.SuppressLint;
 import android.support.v7.widget.Toolbar;
 import android.util.Pair;
 import android.view.View;
@@ -30,6 +31,7 @@ import java.util.Set;
 import static org.smartregister.simprint.activity.SimprintsIdentificationRegisterActivity.REQUEST_CODE;
 import static org.smartregister.simprint.util.Utils.convertDpToPixel;
 
+@SuppressLint("ValidFragment")
 public class SimprintsIdentificationRegisterFragment extends
         BaseRegisterFragment implements SimprintsIdentificationRegisterFragmentContract.View {
 
@@ -41,6 +43,7 @@ public class SimprintsIdentificationRegisterFragment extends
     public SimprintsIdentificationRegisterFragment(ArrayList<Pair<String, String>> results, String sessionId){
         super();
         simprintsIdBaseEntityIdPair = results;
+        clientIds = new ArrayList<>(); //Cleanup clientIds
         for (Pair<String, String> pair : results){
             clientIds.add(pair.second);
         }
