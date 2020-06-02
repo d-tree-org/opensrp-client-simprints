@@ -8,15 +8,29 @@
     android:id="@+id/addo_home_fragment"
     android:orientation="vertical">
 
-    <include
-        layout="@layout/toolbar_base_register"
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/register_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize" />
+        android:layout_height="48dp"
+        android:background="@color/colorPrimary"
+        app:popupTheme="@style/AppTheme.PopupOverlay">
 
-    <include
-        layout="@layout/base_register_search_bar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/google_sans_bold"
+                android:layout_centerInParent="true"
+                android:text="Scan Results"
+                android:textColor="@color/white"
+                android:textSize="14sp"/>
+
+        </RelativeLayout>
+
+    </android.support.v7.widget.Toolbar>
 
     <LinearLayout
         android:id="@+id/clients_header_layout"
@@ -33,14 +47,24 @@
         android:layout_width="match_parent"
         android:layout_height="30dp" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Please select the correct person from the list below"
+        android:fontFamily="@font/google_sans_italic"
+        android:layout_gravity="left"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:textColor="@color/colorPrimary"/>
+
     <FrameLayout
         android:layout_width="fill_parent"
         android:layout_height="0dp"
         android:layout_weight="0.5"
         android:background="@drawable/listview_background_rounded">
 
-
-        <androidx.recyclerview.widget.RecyclerView
+        <android.support.v7.widget.RecyclerView
             android:id="@+id/recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
