@@ -2,16 +2,26 @@ package org.smartregister.simprint.fragment;
 
 
 import android.annotation.SuppressLint;
+import android.graphics.drawable.Drawable;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Pair;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.simprints.libsimprints.SimHelper;
 
 import org.smartregister.commonregistry.CommonPersonObject;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.cursoradapter.RecyclerViewPaginatedAdapter;
+import org.smartregister.job.SyncServiceJob;
+import org.smartregister.job.SyncSettingsServiceJob;
 import org.smartregister.simprint.R;
 import org.smartregister.simprint.SimPrintsHelper;
 import org.smartregister.simprint.SimPrintsLibrary;
@@ -20,6 +30,8 @@ import org.smartregister.simprint.contract.SimprintsIdentificationRegisterFragme
 import org.smartregister.simprint.model.SimprintsIdentificationRegisterFragmentModel;
 import org.smartregister.simprint.presenter.SimprintIdentificationRegisterFragmentPresenter;
 import org.smartregister.simprint.provider.SimprintIdentificationRegisterProvider;
+import org.smartregister.view.activity.BaseRegisterActivity;
+import org.smartregister.view.activity.SecuredNativeSmartRegisterActivity;
 import org.smartregister.view.customcontrols.CustomFontTextView;
 import org.smartregister.view.fragment.BaseRegisterFragment;
 
@@ -54,7 +66,16 @@ public class SimprintsIdentificationRegisterFragment extends
     public void setupViews(View view) {
         super.setupViews(view);
 
-        rootView = view;
+        clientsView = view.findViewById(R.id.recycler_view);
+        clientsView.setHasFixedSize(true);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this.getActivity());
+        clientsView.setLayoutManager(layoutManager);
+        DividerItemDecoration itemDecor = new DividerItemDecoration(this.getActivity(), 1);
+        clientsView.addItemDecoration(itemDecor);
+
+        clientsView.setVisibility(View.VISIBLE);
+        presenter.processViewConfigurations();
+        presenter.initializeQueries(getMainCondition());
 
         Toolbar toolbar = view.findViewById(R.id.register_toolbar);
         toolbar.setContentInsetsAbsolute(0, 0);
@@ -62,29 +83,6 @@ public class SimprintsIdentificationRegisterFragment extends
 
         toolbar.setContentInsetStartWithNavigation(0);
         toolbar.setVisibility(android.view.View.VISIBLE);
-
-        // NavigationMenu.getInstance(this.getActivity(), null, toolbar);
-
-        android.view.View navBarContainer = view.findViewById(R.id.register_nav_bar_container);
-        navBarContainer.setFocusable(false);
-
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams
-                (LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        android.view.View searchBarLayout = view.findViewById(R.id.search_bar_layout);
-        searchBarLayout.setLayoutParams(params);
-        searchBarLayout.setBackgroundResource(R.color.primary_color);
-        searchBarLayout.setPadding(
-                searchBarLayout.getPaddingLeft(),
-                searchBarLayout.getPaddingTop(),
-                searchBarLayout.getPaddingRight(),
-                (int) convertDpToPixel(10.0F, this.getActivity())
-        );
-
-        CustomFontTextView titleView = view.findViewById(R.id.txt_title_label);
-        if (titleView != null) {
-            titleView.setText(R.string.fingerprint_identification_title);
-            titleView.setPadding(0, titleView.getTop(), 0, titleView.getPaddingBottom());
-        }
 
     }
 

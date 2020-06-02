@@ -2,6 +2,9 @@ package org.smartregister.simprint.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,13 +40,31 @@ public class EmptyResultFragment extends BaseRegisterFragment implements EmptyRe
 
     @Override
     public void setupViews(View view) {
+        super.setupViews(view);
+
+        clientsView = view.findViewById(R.id.recycler_view);
+        clientsView.setHasFixedSize(true);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this.getActivity());
+        clientsView.setLayoutManager(layoutManager);
+        DividerItemDecoration itemDecor = new DividerItemDecoration(this.getActivity(), 1);
+        clientsView.addItemDecoration(itemDecor);
+
+        clientsView.setVisibility(View.VISIBLE);
+        presenter.processViewConfigurations();
+        presenter.initializeQueries(getMainCondition());
+
+        Toolbar toolbar = view.findViewById(R.id.register_toolbar);
+        toolbar.setContentInsetsAbsolute(0, 0);
+        toolbar.setContentInsetsRelative(0, 0);
+
+        toolbar.setContentInsetStartWithNavigation(0);
+        toolbar.setVisibility(android.view.View.VISIBLE);
     }
+
 
     @Override
     protected void initializePresenter() {
-
         this.presenter = new EmptyResultFragmentPresenter(this, new SimprintsIdentificationRegisterFragmentModel(), null);
-
     }
 
 
