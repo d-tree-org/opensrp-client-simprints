@@ -157,7 +157,7 @@ allprojects {
 repositories {
     maven {
         name = "GitHubPackages"
-        url = uri("https://maven.pkg.github.com/issyzac/opensrp-client-core")
+        url = uri("https://maven.pkg.github.com/d-tree-org/opensrp-client-core")
         credentials {
             username = githubProperties['gpr.usr'] ?: System.getenv("GPR_USER")
             password = githubProperties['gpr.key'] ?: System.getenv("GPR_API_KEY")
