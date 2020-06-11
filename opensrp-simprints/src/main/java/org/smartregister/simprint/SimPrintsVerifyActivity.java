@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import android.widget.Toast;
 
 import com.simprints.libsimprints.Constants;
+import com.simprints.libsimprints.Tier;
 import com.simprints.libsimprints.Verification;
 
 import static com.simprints.libsimprints.Constants.SIMPRINTS_PACKAGE_NAME;
@@ -71,6 +72,7 @@ public class SimPrintsVerifyActivity extends AppCompatActivity {
                          simprintsVerification = new SimPrintsVerification(verification.getGuid());
                          simprintsVerification.setCheckStatus(true);
                          simprintsVerification.setTier(verification.getTier());
+                         simprintsVerification.setMaskedTier(getMaskedTier(verification.getTier()));
                      }
                      Intent returnIntent = new Intent();
                      returnIntent.putExtra(SimPrintsConstantHelper.INTENT_DATA,simprintsVerification);
@@ -89,4 +91,30 @@ public class SimPrintsVerifyActivity extends AppCompatActivity {
 
         }
     }
+
+    SimPrintsVerification.MaskedTier getMaskedTier(Tier tier){
+        SimPrintsVerification.MaskedTier maskedTier;
+        switch (tier){
+            case TIER_1:
+                maskedTier =  SimPrintsVerification.MaskedTier.TIER_1;
+                break;
+            case TIER_2:
+                maskedTier = SimPrintsVerification.MaskedTier.TIER_2;
+                break;
+            case TIER_3:
+                maskedTier = SimPrintsVerification.MaskedTier.TIER_3;
+                break;
+            case TIER_4:
+                maskedTier = SimPrintsVerification.MaskedTier.TIER_4;
+                break;
+            case TIER_5:
+                maskedTier = SimPrintsVerification.MaskedTier.TIER_5;
+                break;
+            default:
+                maskedTier = null;
+        }
+
+        return maskedTier;
+    }
+
 }
