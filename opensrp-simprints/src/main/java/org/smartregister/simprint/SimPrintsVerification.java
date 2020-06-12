@@ -42,7 +42,7 @@ public class SimPrintsVerification implements Serializable {
         return maskedTier;
     }
 
-    enum MaskedTier {
+    public enum MaskedTier {
         TIER_1,
         TIER_2,
         TIER_3,
