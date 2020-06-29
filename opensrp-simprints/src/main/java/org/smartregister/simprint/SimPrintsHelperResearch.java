@@ -48,8 +48,17 @@ public class SimPrintsHelperResearch {
         intent.putExtra(Constants.SIMPRINTS_PROJECT_ID, projectId);
         intent.putExtra(Constants.SIMPRINTS_SESSION_ID, sessionId);
         intent.putExtra(Constants.SIMPRINTS_SELECTED_GUID, selectedGuid);
+
         // The age is date of birth
-        intent.putExtra("age", formatDateForRiddler(age));
+        String formattedAge = "";
+        try {
+            Date ageDate = new SimpleDateFormat("yyyy-MM-dd").parse(this.age);
+            formattedAge = new SimpleDateFormat("yyyy-MM-dd").format(ageDate);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        intent.putExtra("age", formattedAge);
         return intent;
     }
 
