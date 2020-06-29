@@ -158,7 +158,10 @@ public class SimprintsIdentificationRegisterActivity extends BaseRegisterActivit
                 Intent intent = simPrintsHelperResearch.confirmIdentity(selectedGuid, sessionId);
                 startActivityForResult(intent, REQUEST_CODE);
             } else {
-                finish();
+                //Call confirm identity by passing the research so that SimprintsID wont complain about age not being set
+                SimHelper simPrintsHelper = new SimHelper(SimPrintsLibrary.getInstance().getProjectId(), SimPrintsLibrary.getInstance().getUserId());
+                Intent intent = simPrintsHelper.confirmIdentity(this, sessionId, selectedGuid);
+                startActivityForResult(intent, REQUEST_CODE);
             }
         } else {
             SimHelper simPrintsHelper = new SimHelper(SimPrintsLibrary.getInstance().getProjectId(), SimPrintsLibrary.getInstance().getUserId());
