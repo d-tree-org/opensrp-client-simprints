@@ -51,6 +51,11 @@ public class SimPrintsLibrary {
     public String getProjectId(){
         return projectId;
     }
+
+    public void setProjectId(String projectId){
+        getInstance().projectId = projectId;
+    }
+
     public String getUserId(){
         return userId;
     }
