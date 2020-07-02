@@ -62,6 +62,15 @@ public class SimPrintsRegisterActivity extends AppCompatActivity {
         moduleId = CoreLibrary.getInstance().context().allSharedPreferences().fetchUserLocalityName("");
         userId = CoreLibrary.getInstance().context().allSharedPreferences().fetchRegisteredANM();
 
+        /**
+         * // DIRTY
+         * Enforce simprints projectId to production if the client module is mailimojatraining
+         * This temporarily handles the issue of having a single build for both training and testing server
+         */
+        if (moduleId.equalsIgnoreCase(getResources().getString(R.string.training_module_name))){
+            SimPrintsLibrary.getInstance().setProjectId(getResources().getString(R.string.simprints_production_project_id));
+        }
+
         if (moduleId == null || moduleId.isEmpty() ){
             moduleId = "global_module";
         }
