@@ -42,6 +42,16 @@ public class SimPrintsVerifyActivity extends AppCompatActivity {
         String moduleId = getIntent().getStringExtra(Constants.SIMPRINTS_MODULE_ID);
         String guId = getIntent().getStringExtra(Constants.SIMPRINTS_VERIFY_GUID);
         REQUEST_CODE = getIntent().getIntExtra(PUT_EXTRA_REQUEST_CODE,111);
+
+        /**
+         * // DIRTY
+         * Enforce simprints projectId to production if the client module is mailimojatraining
+         * This temporarily handles the issue of having a single build for both training and testing server
+         */
+        if (moduleId.equalsIgnoreCase(getResources().getString(R.string.training_module_name))){
+            SimPrintsLibrary.getInstance().setProjectId(getResources().getString(R.string.simprints_production_project_id));
+        }
+
         try{
             SimPrintsHelper simprintsHelper = new SimPrintsHelper(SimPrintsLibrary.getInstance().getProjectId(),
                     SimPrintsLibrary.getInstance().getUserId());
