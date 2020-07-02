@@ -61,6 +61,15 @@ public class SimPrintsIdentifyActivity extends AppCompatActivity {
         moduleId = getIntent().getStringExtra(Constants.SIMPRINTS_MODULE_ID);
         userId = CoreLibrary.getInstance().context().allSharedPreferences().fetchRegisteredANM();
 
+        /**
+         * // DIRTY
+         * Enforce simprints projectId to production if the client module is mailimojatraining
+         * This temporarily handles the issue of having a single build for both training and testing server
+         */
+        if (moduleId.equalsIgnoreCase(getResources().getString(R.string.training_module_name))){
+            SimPrintsLibrary.getInstance().setProjectId(getResources().getString(R.string.simprints_production_project_id));
+        }
+
         REQUEST_CODE = getIntent().getIntExtra(PUT_EXTRA_REQUEST_CODE, 111);
 
         startIdentification();
