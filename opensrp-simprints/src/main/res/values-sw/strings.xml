@@ -10,4 +10,9 @@
 
     <string name="none_of_above">Hakuna yoyote</string>
 
+    <string name="biometric_declined_message">Biometric Declined</string>
+
+    <string name="simprints_production_project_id"> PRODUCTION_PROJECT_ID </string>
+    <string name="training_module_name"> TRAINING_MODULE_NAME </string>
+
 </resources>
